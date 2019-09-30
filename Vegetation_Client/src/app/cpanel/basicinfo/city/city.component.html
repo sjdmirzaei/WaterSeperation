@@ -1,0 +1,140 @@
+<div class="row">
+    <div class="col-md-12 portlets">
+        <div class="panel">
+            <div class="panel-header panel-controls">
+                <h3><i class="fa fa-table"></i>شهر</h3>
+                <div class="control-btn">
+                    <a (click)="showAddEdit(null)" class=""><i class="fa fa-plus"></i></a>
+                </div>
+            </div>
+            <div class="panel-content">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width: 1%;">#</th>
+                            <th>نام</th>
+                            <th>نام استان</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="list.length > 0">
+                            <tr *ngFor="let item of list; index as i">
+                                <td>{{i + 1}}</td>
+                                <td>{{item.name}}</td>
+                                <td>{{item.region.name}}</td>
+                                <td>
+
+                                    <a class="edit btn btn-sm btn-primary" (click)="showAddEdit(item)"><i class="icon-note"></i></a>
+                                    <a class="edit btn btn-sm btn-danger" (click)="showDelete(item)"><i class="icon-close"></i></a>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <tr *ngIf="list.length == 0">
+                            <td colspan="8" style="text-align:center;">ایتمی جهت نمایش وجود ندارد.</td>
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <div class="dataTables_info" id="DataTables_Table_0_info" role="status" aria-live="polite">نمایش
+                            {{((page - 1)* 10) + 1}} تا
+                            {{page * 10 > listCount ? listCount : (page * 10)}} از
+                            {{listCount}} ایتم</div>
+                    </div>
+                    <div class="col-sm-7">
+                        <ngb-pagination [collectionSize]="listCount" [(page)]="page" [maxSize]="10" [boundaryLinks]="true"
+                            (pageChange)="load()"></ngb-pagination>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<ng-template #addEditModalContent let-close="close">
+    <form [formGroup]="addEditForm" (ngSubmit)="onSubmit()">
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">{{currentItem.id ? 'ویرایش' : 'ثبت'}}</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label">نام</label>
+                                <div class="append-icon">
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.name"
+                                        formControlName="name" [ngClass]="{ 'form-error': f.name.invalid && (f.name.dirty || f.name.touched) }">
+                                    
+                                </div>
+                                <div *ngIf="f.name.invalid && (f.name.dirty || f.name.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.name.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label">استان</label>
+                                <div class="append-icon">
+                                    <select class="form-control" formControlName="regionId" [(ngModel)]="currentItem.region.id"
+                                        [ngClass]="{ 'form-error': f.regionId.invalid && (f.regionId.dirty || f.regionId.touched) }">
+
+                                        <option *ngFor="let item of regionList" [ngValue]="item.id">
+                                            {{item.name}}
+                                        </option>
+
+                                    </select>
+                                    
+                                </div>
+                                <div *ngIf="f.regionId.invalid && (f.regionId.dirty || f.regionId.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.regionId.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">ثبت</button>
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #deleteModalContent let-close="close">
+    <form>
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">حذف</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                                <span>آیا مایل به حذف این شهر می باشید؟</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-danger" (click)=delete()>حذف</button>
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+        </div>
+    </form>
+</ng-template>

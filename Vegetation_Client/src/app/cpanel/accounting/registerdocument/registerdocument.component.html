@@ -1,0 +1,104 @@
+<div class="row">
+    <div class="col-md-12 portlets">
+        <div class="panel">
+            <div class="panel-header panel-controls">
+                <h3><i class="fa fa-table"></i>سند حسابداری</h3>
+             </div>
+            <div class="panel-content">
+            <div class="row">
+                    <div class="col-sm-3">
+                            <div class="form-group">
+                                    <label class="control-label">از تاریخ</label>
+                                    <input type="text" class="form-control"
+                                    [(ngModel)]="searchfeild.fromdate">
+                              </div>
+                    </div>
+                    <div class="col-sm-3">
+                            <div class="form-group">
+                                    <label class="control-label"> تا تاریخ </label>
+                                    <input type="text" class="form-control"   
+                                     [(ngModel)]="searchfeild.todate">
+                              </div>
+                    </div>
+                  
+          <div class="col-sm-3">
+              <br/>
+                        <div class="form-group">
+                            <label class="control-label"> &nbsp;</label>
+                            <button type="submit" class="btn btn-primary" (click)=search()>جستجو</button>
+                        </div>
+          </div>
+        </div>  
+           
+             <table class="table table-bordered" *ngIf="showtabel"> 
+                    <thead>
+                        <tr>
+                            <th style="width: 1%;"><input type="checkbox"  data-md-icheck (change)="selectitem($event)"/></th>
+                          
+                            <th>کل</th>
+                            <th>معین</th>
+                            <th>تفضیلی</th>
+                            <th>بدهکار</th>
+                            <th>بستانکار</th>
+                            <th>توضیحات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="list.length > 0">
+                            <tr *ngFor="let item of list; index as i">
+                                <td  style="width: 1%;"><input type="checkbox" [attr.disabled]="!item.checkCode"  *ngIf="!item.checkCode"  [(ngModel)]="item.selectitem" />
+                                    <input type="checkbox"  *ngIf="item.checkCode"  [(ngModel)]="item.selectitem" />
+                                </td>
+                                <td *ngIf="item.transactionType.completeCode != null" style="width: 10%;">{{item.transactionType.completeCode}}</td>
+                                <td *ngIf="item.transactionType.completeCode == null" style="width: 10%;" [ngClass]="item.transactionType.completeCode != null ? '' :'red' ">کد کل وارد نشده است</td>
+                                <td  *ngIf="item.transactionType.certainCode != null" style="width: 10%;">{{item.transactionType.certainCode}}</td>
+                                <td   *ngIf="item.transactionType.certainCode == null" style="width: 10%;"[ngClass]="item.transactionType.certainCode != null ? '' :'red' ">کد معین وارد نشده است</td>
+                                <td style="width: 10%;" *ngIf="item.carCode == null" [ngClass]="item.carCode != null ? '' :'red' ">کد تفضیلی وارد نشده است</td>
+                                <td style="width: 10%;" *ngIf="item.carCode != null"   [ngClass]="item.carCode != null ? '' :'red' ">{{item.carCode}}</td>
+                                <td style="width: 10%;">0</td>
+                                <td style="width: 10%;">{{item.value}}</td>
+                                <td >{{item.transactionType.title}}</td>
+                            </tr>
+                        </ng-container>
+                        <tr *ngIf="list.length == 0">
+                            <td colspan="8">ایتمی جهت نمایش وجود ندارد.</td>
+                            </tr>
+                    </tbody>
+                </table>
+                <div class="row" *ngIf="showtabel">
+                        <div class="col-sm-3">
+                                <div class="form-group">
+                                        <label class="control-label">شماره سند</label>
+                                        <input type="text" class="form-control"  
+                                              >
+                                  </div>
+                        </div>
+                        <div class="col-sm-6">
+                                <div class="form-group">
+                                        <label class="control-label">توضیحات سند  </label>
+                                        <input type="text" class="form-control" 
+                                               >
+                                  </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <br/>
+                                <div class="form-group">
+                                <label class="control-label"> </label>
+                                <button type="submit" class="btn btn-primary" (click)=insert()>ثبت</button>
+                            </div>
+                            </div>
+                            <div class="alert media fade in alert-danger" *ngIf="savefail == true">
+                                <p><strong>خطا!</strong>سال مالی درج نشده است</p>
+                            </div>
+                            <div class="alert media fade in alert-danger" *ngIf="disableInsert == true">
+                                    <p><strong>خطا!</strong>انتخاب حداقل یک آیتم الزامی میباشد</p>
+                                </div>
+                    </div>
+            </div>
+            
+
+        </div>
+    </div>
+</div>
+
+

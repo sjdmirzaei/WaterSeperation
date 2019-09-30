@@ -1,0 +1,7 @@
+.drag-active {
+    position: relative;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.3;
+    border-radius: 15px 15px 15px 15px;    
+}

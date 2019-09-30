@@ -1,0 +1,270 @@
+<div class="row">
+    <div class="col-md-12 portlets">
+        <div class="panel">
+            <div class="panel-header panel-controls">
+                <h3><i class="fa fa-table"></i>پارکینگ ها</h3>
+                <div class="control-btn">
+                    <a (click)="showAddEdit(null)" class=""><i class="fa fa-plus"></i></a>
+                </div>
+            </div>
+            <div class="panel-content">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width: 1%;">#</th>
+                            <th>نام</th>
+                            <th>تلفن</th>
+                            <th>نوع</th>
+                            <th>محدوده فعالیت</th>
+                            <th>صاحب پارکینگ</th>
+                            <th>نوع کاربری</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="list.length > 0">
+                            <tr *ngFor="let item of list; index as i">
+                                <td>{{i + 1}}</td>
+                                <td>{{item.name}}</td>
+                                <td>{{item.phone}}</td>
+                                <td>{{item.type.name}}</td>
+                                <td>{{item.scope.name}}</td>
+                                <td>{{item.owner.name}}</td>
+                                <td>{{item.usageType.name}}</td>
+                                <td>
+
+                                    <a class="edit btn btn-sm btn-primary" (click)="showAddEdit(item)"><i class="fa fa-edit"></i></a>
+                                    <a class="edit btn btn-sm btn-danger" (click)="showDelete(item)"><i class="fa fa-close"></i></a>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <tr *ngIf="list.length == 0">
+                            <td colspan="8" style="text-align:center;">ایتمی جهت نمایش وجود ندارد.</td>
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <div class="dataTables_info" id="DataTables_Table_0_info" role="status" aria-live="polite">نمایش
+                            {{((page - 1)* 10) + 1}} تا
+                            {{page * 10 > listCount ? listCount : (page * 10)}} از
+                            {{listCount}} ایتم</div>
+                    </div>
+                    <div class="col-sm-7">
+                        <ngb-pagination [collectionSize]="listCount" [(page)]="page" [maxSize]="10" [boundaryLinks]="true"
+                            (pageChange)="load()"></ngb-pagination>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<ng-template #addEditModalContent let-close="close">
+    <form [formGroup]="addEditForm" (ngSubmit)="onSubmit()">
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">{{currentItem.id ? 'ویرایش' : 'ثبت'}}</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">نام</label>
+                                <div class="append-icon">
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.name"
+                                        formControlName="name" [ngClass]="{ 'form-error': f.name.invalid && (f.name.dirty || f.name.touched) }">
+                                    <i class="icon-user"></i>
+                                </div>
+                                <div *ngIf="f.name.invalid && (f.name.dirty || f.name.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.name.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">تلفن</label>
+                                <div class="append-icon">
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.phone"
+                                        formControlName="phone" [ngClass]="{ 'form-error': f.phone.invalid && (f.phone.dirty || f.phone.touched) }">
+                                    <i class="icon-user"></i>
+                                </div>
+                                <div *ngIf="f.phone.invalid && (f.phone.dirty || f.phone.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.phone.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">ظرفیت</label>
+                                <div class="append-icon">
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.capacity"
+                                        formControlName="capacity" [ngClass]="{ 'form-error': f.capacity.invalid && (f.capacity.dirty || f.capacity.touched) }">
+                                    <i class="icon-user"></i>
+                                </div>
+                                <div *ngIf="f.capacity.invalid && (f.capacity.dirty || f.capacity.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.capacity.errors.required">این فیلد الزامی است</div>
+                                    <div *ngIf="f.capacity.errors.pattern">این فیلد عددی میباشد.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">تعداد کارت</label>
+                                <div class="append-icon">
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.cartcount"
+                                        formControlName="cartcount" [ngClass]="{ 'form-error': f.cartcount.invalid && (f.cartcount.dirty || f.cartcount.touched) }">
+                                    <i class="icon-user"></i>
+                                </div>
+                                <div *ngIf="f.cartcount.invalid && (f.cartcount.dirty || f.cartcount.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.cartcount.errors.required">این فیلد الزامی است</div>
+                                    <div *ngIf="f.cartcount.errors.pattern">این فیلد عددی میباشد.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">صاحب</label>
+                                <div class="append-icon">
+                                    <select class="form-control" formControlName="ownerId" [(ngModel)]="currentItem.owner.id"
+                                        [ngClass]="{ 'form-error': f.ownerId.invalid && (f.ownerId.dirty || f.ownerId.touched) }">
+
+                                        <option *ngFor="let item of ownerList" [ngValue]="item.id">
+                                            {{item.name}}
+                                        </option>
+
+                                    </select>
+                                    <i class="icon-user"></i>
+                                </div>
+                                <div *ngIf="f.ownerId.invalid && (f.ownerId.dirty || f.ownerId.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.ownerId.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">نوع</label>
+                                <div class="append-icon">
+                                    <select class="form-control" formControlName="typeId" [(ngModel)]="currentItem.type.id"
+                                        [ngClass]="{ 'form-error': f.typeId.invalid && (f.typeId.dirty || f.typeId.touched) }">
+
+                                        <option *ngFor="let item of typeList" [ngValue]="item.id">
+                                                {{item.name}}
+                                            </option>
+
+                                    </select>
+                                    <i class="icon-user"></i>
+                                </div>
+                                <div *ngIf="f.typeId.invalid && (f.typeId.dirty || f.typeId.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.typeId.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">نوع کاربری</label>
+                                <div class="append-icon">
+                                    <select class="form-control" formControlName="usagetypeId" [(ngModel)]="currentItem.usageType.id"
+                                        [ngClass]="{ 'form-error': f.usagetypeId.invalid && (f.usagetypeId.dirty || f.usagetypeId.touched) }">
+
+                                        <option *ngFor="let item of usageTypeList" [ngValue]="item.id">
+                                                {{item.name}}
+                                            </option>
+
+                                    </select>
+                                    <i class="icon-user"></i>
+                                </div>
+                                <div *ngIf="f.usagetypeId.invalid && (f.usagetypeId.dirty || f.usagetypeId.touched)"
+                                    class="invalid-feedback form-error">
+                                    <div *ngIf="f.usagetypeId.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">منطقه فعالیت</label>
+                                <div class="append-icon">
+                                    <select class="form-control" formControlName="scopeId" [(ngModel)]="currentItem.scope.id"
+                                        [ngClass]="{ 'form-error': f.scopeId.invalid && (f.scopeId.dirty || f.scopeId.touched) }">
+
+                                        <option *ngFor="let item of scopeList" [ngValue]="item.id">
+                                                {{item.name}}
+                                            </option>
+
+                                    </select>
+                                    <i class="icon-user"></i>
+                                </div>
+                                <div *ngIf="f.scopeId.invalid && (f.scopeId.dirty || f.scopeId.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.scopeId.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label">ادرس</label>
+                                <div class="append-icon">
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.address"
+                                        formControlName="address" [ngClass]="{ 'form-error': f.address.invalid && (f.address.dirty || f.address.touched) }">
+                                    <i class="icon-user"></i>
+                                </div>
+                                <div *ngIf="f.address.invalid && (f.address.dirty || f.address.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.address.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">ثبت</button>
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #deleteModalContent let-close="close">
+    <form>
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">حذف</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                                <span>آیا مایل به حذف این پارکینگ می باشید؟</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-danger" (click)=delete()>حذف</button>
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+        </div>
+    </form>
+</ng-template>

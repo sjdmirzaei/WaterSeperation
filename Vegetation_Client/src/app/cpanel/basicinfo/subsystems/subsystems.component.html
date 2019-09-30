@@ -1,0 +1,145 @@
+<div class="row">
+    <div class="col-md-12 portlets">
+        <div class="panel">
+            <div class="panel-header panel-controls">
+                <h3><i class="fa fa-table"></i>زیرسیستم ها</h3>
+                <div class="control-btn">
+                    <a  (click)="showAddEdit(null)" class=""><i class="fa fa-plus"></i></a>                    
+                </div>
+            </div>
+            <div class="panel-content">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width: 1%;">#</th>
+                            <th>نام</th>                            
+                            <th>عنوان</th>                            
+                            <th>ایکن</th>                            
+                            <th >عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let subsystem of list; index as i">
+                            <td>{{i + 1}}</td>
+                            <td>{{subsystem.name}}</td>                            
+                            <td>{{subsystem.title}}</td>                            
+                            <td>
+                                {{subsystem.icon}}
+                                <i class="{{subsystem.icon}}" style="float:left;"></i>
+                            </td>                            
+                            <td>
+                                <a class="edit btn btn-sm btn-primary" (click)="showAddEdit(subsystem)"><i class="icon-note"></i></a>
+                                <a class="edit btn btn-sm btn-danger" (click)="showDelete(subsystem)"><i class="icon-close"></i></a>                                
+                            </td>                            
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <div class="dataTables_info" id="DataTables_Table_0_info" role="status" aria-live="polite">نمایش
+                            {{((page - 1)* 10) + 1}} تا
+                            {{page * 10 > listCount ? listCount : (page * 10)}} از
+                            {{listCount}} ایتم</div>
+                    </div>
+                    <div class="col-sm-7">                     
+                        <ngb-pagination [collectionSize]="listCount" [(page)]="page" [maxSize]="10" [boundaryLinks]="true" (pageChange)="load()"></ngb-pagination>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<ng-template #addEditModalContent let-close="close">
+    <form [formGroup]="addEditForm" (ngSubmit)="onSubmit()">
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">{{currentItem.id ? 'ویرایش' : 'ثبت'}}</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group" >
+                                <label class="control-label">نام</label>
+                               
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.name" formControlName="name" [ngClass]="{ 'form-error': f.name.invalid && (f.name.dirty || f.name.touched) }">
+                                   
+                                <div *ngIf="f.name.invalid && (f.name.dirty || f.name.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.name.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>      
+                        <div class="col-sm-12">
+                            <div class="form-group" >
+                                <label class="control-label">عنوان</label>
+                             
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.title" formControlName="title" [ngClass]="{ 'form-error': f.name.invalid && (f.name.dirty || f.name.touched) }">
+                                   
+                                <div *ngIf="f.title.invalid && (f.title.dirty || f.title.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.title.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>  
+                    </div>
+                    <div class="row">               
+                        <div class="col-sm-12">
+                                <div class="form-group" >
+                                    <label class="control-label">ایکن</label>
+                                    <div class="append-icon"  >
+                                        <input type="text" class="form-control" [(ngModel)]="currentItem.icon" formControlName="icon" [ngClass]="{ 'form-error': f.icon.invalid && (f.icon.dirty || f.icon.touched) }">
+                                        <i *ngIf="currentItem.id" class="{{currentItem.icon}}" style="float:left;"></i>
+                                    </div>
+                                    <div *ngIf="f.icon.invalid && (f.icon.dirty || f.icon.touched)" class="invalid-feedback form-error">
+                                        <div *ngIf="f.icon.errors.required">این فیلد الزامی است</div>
+                                    </div>
+                                </div>
+                            </div>   
+                        </div>  
+                    </div>
+
+                </div>
+            </div>
+        
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">ثبت</button>
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #deleteModalContent let-close="close">
+    <form>
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">حذف</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="row">
+                        <div class="col-sm-6"> 
+                                <span>آیا مایل به حذف این زیرسیستم می باشید؟</span>                           
+                        </div>                      
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-danger" (click)=delete()>حذف</button>
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+        </div>
+    </form>
+</ng-template>

@@ -1,0 +1,431 @@
+<div class="row">
+    <div class="col-md-12 portlets">
+        <form [formGroup]="addEditForm">
+            <div class="panel">
+                <div class="panel-header panel-controls">
+                    <h3><i class="fa fa-table"></i>{{currentItem.report.id ? 'ویرایش' : 'ثبت'}} گزارش</h3>
+                </div>
+                <div class="panel-content">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label">عنوان گزارش</label>
+                                        <input type="text" class="form-control" [(ngModel)]="currentItem.report.title"
+                                            formControlName="title" [ngClass]="{ 'form-error': f.title.invalid && (f.title.dirty || f.title.touched) }">
+                                        <div *ngIf="f.title.invalid && (f.title.dirty || f.title.touched)" class="invalid-feedback form-error">
+                                            <div *ngIf="f.title.errors.required">این فیلد الزامی است</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label">گروه گزارش</label>
+                                        <select class="form-control" formControlName="reportGroupId" [(ngModel)]="currentItem.report.reportGroupId"
+                                            [ngClass]="{ 'form-error': f.reportGroupId.invalid && (f.reportGroupId.dirty || f.reportGroupId.touched) }">
+
+                                            <option *ngFor="let group of reportGroups" [ngValue]="group.id">
+                                                {{group.title}} </option>
+
+                                        </select>
+                                        <div *ngIf="f.reportGroupId.invalid && (f.reportGroupId.dirty || f.reportGroupId.touched)"
+                                            class="invalid-feedback form-error">
+                                            <div *ngIf="f.reportGroupId.errors.required">این فیلد الزامی است</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label">&nbsp;</label>
+                                        <div class="checkbox">
+                                            <label>
+                                                <span class="text">صفحه بندی دارد؟</span>
+                                                <input type="checkbox" [(ngModel)]="currentItem.report.hasPager"
+                                                    [ngModelOptions]="{standalone: true}" />
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label class="control-label">کوئری</label>
+                                        <textarea class="form-control" [(ngModel)]="currentItem.report.query" dir="ltr"
+                                            rows="10" formControlName="query" [ngClass]="{ 'form-error': f.query.invalid && (f.query.dirty || f.query.touched) }"></textarea>
+                                        <div *ngIf="f.query.invalid && (f.query.dirty || f.query.touched)" class="invalid-feedback form-error">
+                                            <div *ngIf="f.query.errors.required">این فیلد الزامی است</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button type="addColumn" class="btn btn-primary" (click)="showAddEditColumn(null)"><i
+                                            class="fa fa-plus"></i></button>
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 1%;">#</th>
+                                                <th>عنوان ستون</th>
+                                                <th>جداکننده دارد</th>
+                                                <th>حاصل جمع دارد</th>
+                                                <th>میانگین دارد</th>
+                                                <th>ابزار</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <ng-container *ngIf="currentItem.reportColumns.length > 0">
+                                                <tr *ngFor="let item of currentItem.reportColumns; index as i">
+                                                    <td>{{i + 1}}</td>
+                                                    <td>{{item.title}}</td>
+                                                    <td>
+                                                        <i *ngIf="item.isSeparator" class="glyphicon glyphicon-check"></i>
+                                                        <i *ngIf="!item.isSeparator" class="glyphicon glyphicon-unchecked"></i>
+                                                    </td>
+                                                    <td>
+                                                        <i *ngIf="item.isSum" class="glyphicon glyphicon-check"></i>
+                                                        <i *ngIf="!item.isSum" class="glyphicon glyphicon-unchecked"></i>
+                                                    </td>
+                                                    <td>
+                                                        <i *ngIf="item.isAverage" class="glyphicon glyphicon-check"></i>
+                                                        <i *ngIf="!item.isAverage" class="glyphicon glyphicon-unchecked"></i>
+                                                    </td>
+                                                    <td>
+                                                        <a class="edit btn btn-sm btn-primary" (click)="showAddEditColumn(item)"><i
+                                                                class="icon-note"></i></a>
+                                                        <a class="edit btn btn-sm btn-danger" (click)="showDeleteColumn(item)"><i
+                                                                class="icon-close"></i></a>
+                                                    </td>
+                                                </tr>
+                                            </ng-container>
+                                            <tr *ngIf="currentItem.reportParameters.length == 0">
+                                                <td colspan="5" style="text-align:center;">ایتمی جهت نمایش وجود ندارد.</td>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button type="addPatameter" class="btn btn-primary" (click)="showAddEdit(null)"><i
+                                            class="fa fa-plus"></i></button>
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 1%;">#</th>
+                                                <th>پارامتر جهت نمایش</th>
+                                                <th>پارامتر در کوئری</th>
+                                                <th>نوع کنترل نمایشی</th>
+                                                <th>اولویت</th>
+                                                <th>وضعیت انتخابی/اجباری</th>
+                                                <th>عرض کنترل(1-12)</th>
+                                                <th>ابزار</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <ng-container *ngIf="currentItem.reportParameters.length > 0">
+                                                <tr *ngFor="let item of currentItem.reportParameters; index as i">
+                                                    <td>{{i + 1}}</td>
+                                                    <td>{{item.title}}</td>
+                                                    <td>{{item.name}}</td>
+                                                    <td>{{item.typeTitle}}</td>
+                                                    <td>{{item.priority}}</td>
+                                                    <td>
+                                                        <i *ngIf="item.isOptional" class="glyphicon glyphicon-check"></i>
+                                                        <i *ngIf="!item.isOptional" class="glyphicon glyphicon-unchecked"></i>
+                                                    </td>
+                                                    <td>{{item.width}}
+                                                    </td>
+                                                    <td>
+                                                        <a class="edit btn btn-sm btn-primary" (click)="showAddEdit(item)"><i
+                                                                class="icon-note"></i></a>
+                                                        <a class="edit btn btn-sm btn-danger" (click)="showDelete(item)"><i
+                                                                class="icon-close"></i></a>
+                                                    </td>
+                                                </tr>
+                                            </ng-container>
+                                            <tr *ngIf="currentItem.reportParameters.length == 0">
+                                                <td colspan="8" style="text-align:center;">ایتمی جهت نمایش وجود ندارد.</td>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <button type="submit" class="btn btn-primary" (click)="onSubmit()">ثبت</button>
+                            <button type="button" class="btn btn-default">خروج</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<ng-template #addEditColumnModalContent let-close="close">
+    <form [formGroup]="addEditColumn">
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">{{currentItem.id ? 'ویرایش' : 'ثبت'}}</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label">عنوان ستون</label>
+                                <input type="text" class="form-control" [(ngModel)]="currentColumnItem.title"
+                                    formControlName="title" [ngClass]="{ 'form-error': fc.title.invalid && (fc.title.dirty || fc.title.touched) }">
+                                <div *ngIf="fc.title.invalid && (fc.title.dirty || fc.title.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="fc.title.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label">&nbsp;</label>
+                                <div class="checkbox">
+                                    <label>
+                                        <span class="text">جدا کننده دارد؟</span>
+                                        <input type="checkbox" [(ngModel)]="currentColumnItem.isSeparator"
+                                            [ngModelOptions]="{standalone: true}" />
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label">&nbsp;</label>
+                                <div class="checkbox">
+                                    <label>
+                                        <span class="text">حاصل جمع دارد؟</span>
+                                        <input type="checkbox" [(ngModel)]="currentColumnItem.isSum" [ngModelOptions]="{standalone: true}" />
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label">&nbsp;</label>
+                                <div class="checkbox">
+                                    <label>
+                                        <span class="text">میانگین دارد؟</span>
+                                        <input type="checkbox" [(ngModel)]="currentColumnItem.isAverage"
+                                            [ngModelOptions]="{standalone: true}" />
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" (click)="onSubmitColumn()">ثبت</button>
+            <button type="button" class="btn btn-default" (click)="closeColumn()">خروج</button>
+        </div>
+    </form>
+</ng-template>
+
+
+<ng-template #deleteColumnModalContent let-close="close">
+        <form>
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title">حذف</h5>
+                <button type="button" class="close" (click)="close()">
+                    <i class="icons-office-52"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+    
+                        <div class="row">
+                            <div class="col-sm-6">
+                                    آیا مایل به حذف این ستون می باشید؟
+                            </div>
+                        </div>
+    
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-danger" (click)=deleteColumn()>حذف</button>
+                <button type="button" class="btn btn-default">خروج</button>
+            </div>
+        </form>
+    </ng-template>
+
+<ng-template #addEditModalContent let-close="close">
+    <form [formGroup]="addEditParameter">
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">{{currentItem.id ? 'ویرایش' : 'ثبت'}}</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">پارامتر جهت نمایش</label>
+                                <input type="text" class="form-control" [(ngModel)]="currentPropertyItem.title"
+                                    formControlName="title" [ngClass]="{ 'form-error': fp.title.invalid && (fp.title.dirty || fp.title.touched) }">
+                                <div *ngIf="fp.title.invalid && (fp.title.dirty || fp.title.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="fp.title.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">پارامتر در کوئری</label>
+                                <input type="text" class="form-control" [(ngModel)]="currentPropertyItem.name" dir="ltr"
+                                    formControlName="name" [ngClass]="{ 'form-error': fp.name.invalid && (fp.name.dirty || fp.name.touched) }">
+                                <div *ngIf="fp.name.invalid && (fp.name.dirty || fp.name.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="fp.name.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">عرض کنترل (col-sm-2)</label>
+                                <input type="text" class="form-control" [(ngModel)]="currentPropertyItem.width"
+                                    formControlName="width" [ngClass]="{ 'form-error': fp.width.invalid && (fp.width.dirty || fp.width.touched) }">
+                                <div *ngIf="fp.width.invalid && (fp.width.dirty || fp.width.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="fp.width.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">ترتیب نمایش</label>
+                                <input type="number" id="priority" class="form-control" [(ngModel)]="currentPropertyItem.priority"
+                                    [ngModelOptions]="{standalone: true}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">نوع پارامتر جهت نمایش</label>
+                                <select class="form-control" formControlName="type" [(ngModel)]="currentPropertyItem.type"
+                                    [ngClass]="{ 'form-error': fp.type.invalid && (fp.type.dirty || fp.type.touched) }">
+
+                                    <option *ngFor="let type of parameterTypes" [ngValue]="type.value">
+                                        {{type.key}} </option>
+
+                                </select>
+                                <div *ngIf="fp.type.invalid && (fp.type.dirty || fp.type.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="fp.type.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">&nbsp;</label>
+                                <div class="checkbox">
+                                    <label>
+                                        <span class="text">پارامتر اختیاری است؟</span>
+                                        <input type="checkbox" [(ngModel)]="currentPropertyItem.isOptional"
+                                            [ngModelOptions]="{standalone: true}" />
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="currentPropertyItem.type==7">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label">کوئری</label>
+                                <textarea id="query" class="form-control" [(ngModel)]="currentPropertyItem.query" dir="ltr"
+                                    rows="3" [ngModelOptions]="{standalone: true}"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="currentPropertyItem.type==6">
+                        <div class="row" *ngFor="let item of currentPropertyItem.staticItems; index as i">
+                            <div class="form-group col-sm-3">
+                                <label class="control-label">عنوان</label>
+                                <input type="text" id="text{{i}}" class="form-control" [(ngModel)]="currentPropertyItem.staticItems[i].text"
+                                    [ngModelOptions]="{standalone: true}" />
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <label class="control-label">مقدار</label>
+                                <input type="number" id="value{{i}}" class="form-control" [(ngModel)]="currentPropertyItem.staticItems[i].value"
+                                    [ngModelOptions]="{standalone: true}" />
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <label class="control-label">&nbsp;</label>
+                                <div class="radio">
+                                    <label>
+                                        <input name="item-radio" type="radio" [(ngModel)]="currentPropertyItem.staticItems[i].isDefault"
+                                            [ngModelOptions]="{standalone: true}">
+                                        <span class="text">انتخاب بعنوان پیش فرض</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-3" style="padding-top: 33px;">
+                                <span *ngIf="i==0"><i class="far fa-plus-square" style="font-size: 20px;" (click)="currentPropertyItem.staticItems.push({})"></i></span>
+                                &nbsp;<span *ngIf="i>=0"><i class="far fa-trash-alt" style="font-size: 20px;" (click)="currentPropertyItem.staticItems.splice(i, 1)"></i></span>
+                            </div>
+                        </div>
+                        <span *ngIf="currentPropertyItem.staticItems.length==0">
+                            <i class="far fa-plus-square" style="font-size: 20px;" (click)="currentPropertyItem.staticItems.push({})"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" (click)="onSubmitParameter()">ثبت</button>
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #deleteModalContent let-close="close">
+    <form>
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">حذف</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                                آیا مایل به حذف این پارامتر می باشید؟
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-danger" (click)=deleteParameter()>حذف</button>
+            <button type="button" class="btn btn-default">خروج</button>
+        </div>
+    </form>
+</ng-template>

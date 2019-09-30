@@ -1,0 +1,114 @@
+<div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-4">
+        <div class="form-group">
+            <label class="control-label">لیست مناطق</label>
+            <select class="form-control" name="areaId" [(ngModel)]="areaId" (change)="selectarea()">
+                <option *ngFor="let item of areas" [ngValue]="item.id">
+                    {{item.name}} </option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-3 col-xlg-2 p-0">
+    <div class="widget">
+        <div class="widget-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <h2 class="text-white semi-bold" id="calender-current-day">لیست شیفت ها</h2>
+                    <div id="external-events">
+                        <div class="external-event bg-dark ui-draggable ui-draggable-handle" data-class="bg-dark" style="position: relative;text-align: center"
+                            *ngFor="let event of shifts" mwlDraggable [dropData]="{event: event}" dragActiveClass="drag-active">
+                            <i class="fa fa-move"></i>{{ event.title }} <br />{{event.startTime}} -
+                            {{event.endTime}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-9 col-xlg-10 p-0 no-bd">
+    <mwl-day-view-scheduler mwlDroppable [viewDate]="viewDate" [dayStartHour]="7" [dayEndHour]="21" [hourSegments]="2"
+        [streets]="streets" [events]="events" [refresh]="refresh" [snapDraggedEvents]="false" (eventClicked)="onEventClick($event)"  (eventTimesChanged)="oneventTimesChanged($event)">
+    </mwl-day-view-scheduler>
+</div>
+
+<ng-template #assignModalContent let-close="close">
+    <form [formGroup]="assignForm" (ngSubmit)="onSubmit()">
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">انتساب</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="control-label">پارکبان</label>
+                            <div class="append-icon">
+                                <select class="form-control" formControlName="parkbanId" [(ngModel)]="currentItem.event.meta.parkbanId"
+                                    [ngClass]="{ 'form-error': f.parkbanId.invalid && (f.parkbanId.dirty || f.parkbanId.touched) }">
+
+                                    <option *ngFor="let item of users" [ngValue]="item.id">
+                                        {{item.name}}
+                                    </option>
+
+                                </select>
+
+                            </div>
+                            <div *ngIf="f.parkbanId.invalid && (f.parkbanId.dirty || f.parkbanId.touched)" class="invalid-feedback form-error">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="control-label">افسر پلبس</label>
+                            <div class="append-icon">
+                                <select class="form-control" formControlName="policeId" [(ngModel)]="currentItem.event.meta.policeId"
+                                    [ngClass]="{ 'form-error': f.policeId.invalid && (f.policeId.dirty || f.policeId.touched) }">
+
+                                    <option *ngFor="let item of polices" [ngValue]="item.id">
+                                        {{item.name}}
+                                    </option>
+
+                                </select>
+
+                            </div>
+                            <div *ngIf="f.policeId.invalid && (f.policeId.dirty || f.policeId.touched)" class="invalid-feedback form-error">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="control-label">کارورز</label>
+                            <div class="append-icon">
+                                <select class="form-control" formControlName="studentId" [(ngModel)]="currentItem.event.meta.studentId"
+                                    [ngClass]="{ 'form-error': f.studentId.invalid && (f.studentId.dirty || f.studentId.touched) }">
+
+                                    <option *ngFor="let item of students" [ngValue]="item.id">
+                                        {{item.name}}
+                                    </option>
+
+                                </select>
+
+                            </div>
+                            <div *ngIf="f.studentId.invalid && (f.studentId.dirty || f.studentId.touched)" class="invalid-feedback form-error">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="modal-footer">            
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+            <button type="button" class="btn btn-danger" style="float: right;" (click)="delete()">حذف</button>
+        </div>
+    </form>
+</ng-template>

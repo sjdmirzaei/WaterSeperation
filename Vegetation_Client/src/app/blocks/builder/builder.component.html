@@ -1,0 +1,88 @@
+<div class="builder hidden-sm hidden-xs" id="builder">
+    <a class="builder-toggle" (click)="toggle()"><i class="icon-wrench"></i></a>
+    <div class="inner">
+      <div class="builder-container">
+        <a href="#" class="btn btn-sm btn-default" id="reset-style">بازگشت به تنظیمات اولیه</a>
+        <h4>تنظیمات نمایه</h4>
+        <div class="layout-option">
+          <span> قفل منو</span>
+          <label class="switch pull-right">
+          <input (click)="toggleSidebar()" data-layout="sidebar" id="switch-sidebar" type="checkbox" class="switch-input" checked>
+          <span class="switch-label" data-on="بلی" data-off="خیر"></span>
+          <span class="switch-handle"></span>
+          </label>
+        </div>
+        <!-- <div class="layout-option">
+          <span> Sidebar on Hover</span>
+          <label class="switch pull-right">
+          <input data-layout="sidebar-hover" id="switch-sidebar-hover" type="checkbox" class="switch-input">
+          <span class="switch-label" data-on="بلی" data-off="خیر"></span>
+          <span class="switch-handle"></span>
+          </label>
+        </div>
+        <div class="layout-option">
+          <span> Submenu on Hover</span>
+          <label class="switch pull-right">
+          <input data-layout="submenu-hover" id="switch-submenu-hover" type="checkbox" class="switch-input">
+          <span class="switch-label" data-on="بلی" data-off="خیر"></span>
+          <span class="switch-handle"></span>
+          </label>
+        </div> -->
+        <div class="layout-option">
+          <span>قفل نوار بالا</span>
+          <label class="switch pull-right">
+          <input (click)="toggleTopbar()" data-layout="topbar" id="switch-topbar" type="checkbox" class="switch-input" checked>
+          <span class="switch-label" data-on="بلی" data-off="خیر"></span>
+          <span class="switch-handle"></span>
+          </label>
+        </div>       
+        <h4 class="border-top">رنگ ها</h4>
+        <div class="row">
+          <div class="col-xs-12">
+            <div *ngFor="let color of Colors; index as i" (click)="changeColor(i)" class="theme-color {{color.class}} {{ currentColor == i ? 'active' : '' }}" attr.data-main="{{color.name}}" attr.data-color="{{color.color}}"></div>            
+          </div>
+        </div>
+        <h4 class="border-top">نمایه</h4>
+        <div class="row row-sm">
+          <div class="col-xs-6">
+            <div class="theme clearfix sdtl" data-theme="sdtl" (click)="changeTheme('sdtl')">
+              <div class="header theme-left"></div>
+              <div class="header theme-right-light"></div>
+              <div class="theme-sidebar-dark"></div>
+              <div class="bg-light"></div>
+            </div>
+          </div>
+          <div class="col-xs-6">
+            <div class="theme clearfix sltd" data-theme="sltd" (click)="changeTheme('sltd')">
+              <div class="header theme-left"></div>
+              <div class="header theme-right-dark"></div>
+              <div class="theme-sidebar-light"></div>
+              <div class="bg-light"></div>
+            </div>
+          </div>
+          <div class="col-xs-6">
+            <div class="theme clearfix sdtd" data-theme="sdtd" (click)="changeTheme('sdtd')">
+              <div class="header theme-left"></div>
+              <div class="header theme-right-dark"></div>
+              <div class="theme-sidebar-dark"></div>
+              <div class="bg-light"></div>
+            </div>
+          </div>
+          <div class="col-xs-6">
+            <div class="theme clearfix sltl" data-theme="sltl" (click)="changeTheme('sltl')">
+              <div class="header theme-left"></div>
+              <div class="header theme-right-light"></div>
+              <div class="theme-sidebar-light"></div>
+              <div class="bg-light"></div>
+            </div>
+          </div>
+        </div>
+        <h4 class="border-top">پس زمینه</h4>
+        <div class="row">
+          <div class="col-xs-12">
+            <div *ngFor="let bgColor of BgColors; index as i" class="bg-color bg-{{bgColor.name}} {{currentBgColor == i ? 'active' : ''}}" data-bg="clean" attr.data-color="{{bgColor.color}}" (click)="ChangeBgColor(i)"></div>            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

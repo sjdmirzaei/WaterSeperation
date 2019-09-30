@@ -1,0 +1,151 @@
+<div class="row">
+    <div class="col-md-12 portlets">
+        <div class="panel">
+            <div class="panel-header panel-controls">
+                <h3><i class="fa fa-table"></i>خیابان</h3>
+                <div class="control-btn">
+                    <a (click)="showAddEdit(null)" class=""><i class="fa fa-plus"></i></a>
+                </div>
+            </div>
+            <div class="panel-content">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width: 1%;">#</th>
+                            <th>نام</th>
+                            <th>ناحیه</th>
+                            <th>دپو</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="list.length > 0">
+                            <tr *ngFor="let item of list; index as i">
+                                <td>{{i + 1}}</td>
+                                <td>{{item.name}}</td>
+                                <td>{{item.area.name}}</td>
+                                <td>{{item.storage.name}}</td>
+                                <td>
+                                    <a class="edit btn btn-sm btn-primary" (click)="showAddEdit(item)"><i class="icon-note"></i></a>
+                                    <a class="edit btn btn-sm btn-danger" (click)="showDelete(item)"><i class="icon-close"></i></a>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <tr *ngIf="list.length == 0">
+                            <td colspan="5" style="text-align:center;">ایتمی جهت نمایش وجود ندارد.</td>
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <div class="dataTables_info" id="DataTables_Table_0_info" role="status" aria-live="polite">نمایش
+                            {{((page - 1)* 10) + 1}} تا
+                            {{page * 10 > listCount ? listCount : (page * 10)}} از
+                            {{listCount}} ایتم</div>
+                    </div>
+                    <div class="col-sm-7">
+                        <ngb-pagination [collectionSize]="listCount" [(page)]="page" [maxSize]="10" [boundaryLinks]="true"
+                            (pageChange)="load()"></ngb-pagination>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<ng-template #addEditModalContent let-close="close">
+    <form [formGroup]="addEditForm" (ngSubmit)="onSubmit()">
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">{{currentItem.id ? 'ویرایش' : 'ثبت'}}</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label">ناحیه</label>
+                                <select class="form-control" formControlName="area"  [(ngModel)]="currentItem.area.id"
+                                    [ngClass]="{ 'form-error': f.area.invalid && (f.area.dirty || f.area.touched) }">
+
+                                    <option *ngFor="let area of arealist" [ngValue]="area.id">
+                                        {{area.name}} </option>
+
+                                </select>
+                                <div *ngIf="f.area.invalid && (f.area.dirty || f.area.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.area.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label">دپو</label>
+                                <select class="form-control" formControlName="storage"  [(ngModel)]="currentItem.storage.id"
+                                    [ngClass]="{ 'form-error': f.storage.invalid && (f.storage.dirty || f.storage.touched) }">
+
+                                    <option *ngFor="let storage of storagelist" [ngValue]="storage.id">
+                                        {{storage.name}} </option>
+
+                                </select>
+                                <div *ngIf="f.storage.invalid && (f.storage.dirty || f.storage.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.storage.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label">نام</label>
+                                <input type="text" class="form-control" [(ngModel)]="currentItem.name" formControlName="name"
+                                    [ngClass]="{ 'form-error': f.name.invalid && (f.name.dirty || f.name.touched) }">
+                                <div *ngIf="f.name.invalid && (f.name.dirty || f.name.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.name.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">ثبت</button>
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #deleteModalContent let-close="close">
+    <form>
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">حذف</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                                <span>آیا مایل به حذف این خیابان می باشید؟</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-danger" (click)=delete()>حذف</button>
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+        </div>
+    </form>
+</ng-template>

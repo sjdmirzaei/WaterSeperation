@@ -1,0 +1,502 @@
+<div class="row">
+    <div class="col-md-12 portlets">
+        <div class="panel">
+            <div class="panel-header panel-controls">
+                <h3><i class="far fa-credit-card"></i>تعرفه ها</h3>
+                <div class="control-btn">
+                    <a (click)="showAddEdit(null)" class=""><i class="fa fa-plus"></i></a>
+                </div>
+            </div>
+            <div class="panel-content">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width: 1%;">#</th>
+                            <th>نام</th>
+                            <th>نوع پارکینگ</th>
+                            <th>از تاریخ</th>
+                            <th>تا تاریخ</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of list; index as i">
+                            <td>{{i + 1}}</td>
+                            <td>{{item.name}}</td>
+                            <td>{{item.parkingKindName}}</td>
+                            <td>{{item.registerFromDate}}</td>
+                            <td>{{item.registerToDate}}</td>
+                            <td>
+                                <a class="edit btn btn-sm btn-primary" (click)="showAddEdit(item)"><i class="fa fa-edit"></i></a>
+                                <a class="edit btn btn-sm btn-danger" (click)="showDelete(item)"><i class="fa fa-trash"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <div class="dataTables_info" id="DataTables_Table_0_info" role="status" aria-live="polite">نمایش
+                            {{((page - 1)* 10) + 1}} تا
+                            {{page * 10 > listCount ? listCount : (page * 10)}} از
+                            {{listCount}} ایتم</div>
+                    </div>
+                    <div class="col-sm-7">
+                        <ngb-pagination [collectionSize]="listCount" [(page)]="page" [maxSize]="10" [boundaryLinks]="true"
+                            (pageChange)="load()"></ngb-pagination>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<ng-template #addEditModalContent let-close="close">
+    <form [formGroup]="addEditForm" (ngSubmit)="onSubmit()">
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">{{currentItem.id ? 'ویرایش' : 'ثبت'}}</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">نام</label>
+                                <div class="append-icon">
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.name"
+                                        formControlName="name" [ngClass]="{ 'form-error': f.name.invalid && (f.name.dirty || f.name.touched) }">
+
+                                </div>
+                                <div *ngIf="f.name.invalid && (f.name.dirty || f.name.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.name.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">نوع تعرفه</label>
+                                <div class="append-icon">
+                                    <select class="form-control" formControlName="parkingKind" [(ngModel)]="currentItem.parkingKind"
+                                        [ngClass]="{ 'form-error': f.parkingKind.invalid && (f.parkingKind.dirty || f.parkingKind.touched) }">
+                                        <!-- <option *ngFor="let item of enumlist" [ngValue]="item.id">
+                                        {{item.id}}
+                                    </option> -->
+                                        <option value="1">
+                                            پارکینگ حاشیه ای
+                                        </option>
+                                        <option value="2">
+                                            پارکینگ غیرحاشیه ای
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+                                <div *ngIf="f.parkingKind.invalid && (f.parkingKind.dirty || f.parkingKind.touched)"
+                                    class="invalid-feedback form-error">
+                                    <div *ngIf="f.parkingKind.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">از تاریخ:</label>
+                                <div class="append-icon">
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.registerFromDate"
+                                        formControlName="RegisterFromDate" [ngClass]="{ 'form-error': f.RegisterFromDate.invalid && (f.RegisterFromDate.dirty || f.RegisterFromDate.touched) }">
+
+                                </div>
+                                <div *ngIf="f.RegisterFromDate.invalid && (f.RegisterFromDate.dirty || f.RegisterFromDate.touched)"
+                                    class="invalid-feedback form-error">
+                                    <div *ngIf="f.RegisterFromDate.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">تا تاریخ :</label>
+                                <div class="append-icon">
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.registerToDate"
+                                        formControlName="RegisterToDate" [ngClass]="{ 'form-error': f.RegisterToDate.invalid && (f.RegisterToDate.dirty || f.RegisterToDate.touched) }">
+
+                                </div>
+                                <div *ngIf="f.RegisterToDate.invalid && (f.RegisterToDate.dirty || f.RegisterToDate.touched)"
+                                    class="invalid-feedback form-error">
+                                    <div *ngIf="f.RegisterToDate.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="panel " *ngIf="currentItem.parkingKind==1">
+                    <div class="panel-content">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class=" control-label">هر(دقیقه):</label>
+                                        <div class=" append-icon">
+                                            <input type="text" class="form-control" [(ngModel)]="currentItem.intervalTime"
+                                                formControlName="intervalTime" [ngClass]="{ 'form-error': f.intervalTime.invalid && (f.intervalTime.dirty || f.intervalTime.touched) }">
+                                        </div>
+                                        <div *ngIf="f.intervalTime.invalid && (f.intervalTime.dirty || f.intervalTime.touched)"
+                                            class="invalid-feedback form-error">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label class=" control-label">هزینه ثابت:</label>
+                                            <div class=" append-icon">
+                                                <input type="text" class="form-control" [(ngModel)]="currentItem.fixCost"
+                                                    formControlName="fixCost" [ngClass]="{ 'form-error': f.fixCost.invalid && (f.fixCost.dirty || f.fixCost.touched) }">
+                                            </div>
+                                            <div *ngIf="f.fixCost.invalid && (f.fixCost.dirty || f.fixCost.touched)" class="invalid-feedback form-error">
+                                            </div>
+                                        </div>
+                                    </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class=" control-label">درصد (افزایشی):</label>
+                                        <div class=" append-icon">
+                                            <input type="text" class="form-control" [(ngModel)]="currentItem.percent"
+                                                formControlName="percent" [ngClass]="{ 'form-error': f.percent.invalid && (f.percent.dirty || f.percent.touched) }">
+                                        </div>
+                                        <div *ngIf="f.percent.invalid && (f.percent.dirty || f.percent.touched)" class="invalid-feedback form-error">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>ّ
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">ثبت</button>
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #addEditConditionModalContent let-close="close">
+    <form [formGroup]="addEditConditionForm" (ngSubmit)="onSubmit()">
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">{{current.id ? 'ویرایش' : 'ثبت'}}</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                    <div style="margin:10px">
+                            <p> پارکینگ غیرحاشیه ای</p>
+                    </div>
+    
+
+                <div class="panel panel-default">
+                    <div class="panel-content">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class=" control-label">تعداد:</label>
+                                        <div class=" append-icon">
+                                            <input type="text" class="form-control" [(ngModel)]="current.count"
+                                                formControlName="Count" [ngClass]="{ 'form-error': f1.Count.invalid && (f1.Count.dirty || f1.Count.touched) }">
+
+                                        </div>
+                                        <div *ngIf="f1.Count.invalid && (f1.Count.dirty || f1.Count.touched)" class="invalid-feedback form-error">
+                                            <div *ngIf="f1.Count.errors.required">این فیلد الزامی است</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class=" control-label">هر(دقیقه):</label>
+                                        <div class=" append-icon">
+                                            <input type="text" class="form-control" [(ngModel)]="current.periodicalCount"
+                                                formControlName="PeriodicalCount" [ngClass]="{ 'form-error': f1.PeriodicalCount.invalid && (f1.PeriodicalCount.dirty || f1.PeriodicalCount.touched) }">
+
+                                        </div>
+                                        <div *ngIf="f1.PeriodicalCount.invalid && (f1.PeriodicalCount.dirty || f1.PeriodicalCount.touched)"
+                                            class="invalid-feedback form-error">
+                                            <div *ngIf="f1.naPeriodicalCountme.errors.required">این فیلد الزامی است</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class=" control-label">هزینه:</label>
+                                        <div class=" append-icon">
+                                            <input type="text" class="form-control" [(ngModel)]="current.cost"
+                                                formControlName="Cost" [ngClass]="{ 'form-error': f1.Cost.invalid && (f1.Cost.dirty || f1.Cost.touched) }">
+
+                                        </div>
+                                        <div *ngIf="f1.Cost.invalid && (f1.Cost.dirty || f1.Cost.touched)" class="invalid-feedback form-error">
+                                            <div *ngIf="f1.Cost.errors.required">این فیلد الزامی است</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-1">
+                                    <label class=" control-label">ثبت</label>
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i></button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 1%;">#</th>
+                                                <th>تعداد</th>
+                                                <th>به ازاء</th>
+                                                <th>هزینه</th>
+                                                <th>عملیات</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let item of Conditionlist; index as i">
+                                                <td>{{i + 1}}</td>
+                                                <td>{{item.count}}</td>
+                                                <td>{{item.periodicalCount}}</td>
+                                                <td>{{item.cost}}</td>
+
+                                                <td>
+                                                    <a class="edit btn btn-sm btn-primary" (click)="showAddEditConditionTemp(item)"><i
+                                                            class="fa fa-edit"></i></a>
+                                                    <a class="edit btn btn-sm btn-danger" (click)="deleteCondition(item)"><i
+                                                            class="fa fa-trash"></i></a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #addEditConditionMarginModalContent let-close="close">
+    <form [formGroup]="addEditConditionMarginForm" (ngSubmit)="onSubmit()">
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">{{currentMargin.id ? 'ویرایش' : 'ثبت'}}</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div style="margin:10px">
+                        <p>پارکینگ حاشیه ای</p>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-content">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class=" control-label">از ساعت:</label>
+                                        <div class=" append-icon">
+                                            <input type="text" class="form-control" [(ngModel)]="currentMargin.fromTime"
+                                                formControlName="fromTime" [ngClass]="{ 'form-error': f2.fromTime.invalid && (f2.fromTime.dirty || f2.fromTime.touched) }">
+
+                                        </div>
+                                        <div *ngIf="f2.fromTime.invalid && (f2.fromTime.dirty || f2.fromTime.touched)"
+                                            class="invalid-feedback form-error">
+                                            <div *ngIf="f2.fromTime.errors.required">این فیلد الزامی است</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class=" control-label">تا ساعت:</label>
+                                        <div class=" append-icon">
+                                            <input type="text" class="form-control" [(ngModel)]="currentMargin.toTime"
+                                                formControlName="toTime" [ngClass]="{ 'form-error': f2.toTime.invalid && (f2.toTime.dirty || f2.toTime.touched) }">
+
+                                        </div>
+                                        <div *ngIf="f2.toTime.invalid && (f2.toTime.dirty || f2.toTime.touched)" class="invalid-feedback form-error">
+                                            <div *ngIf="f2.naPeriodicalCountme.errors.required">این فیلد الزامی است</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class=" control-label">هزینه ثابت:</label>
+                                        <div class=" append-icon">
+                                            <input type="text" class="form-control" [(ngModel)]="currentMargin.fixCost"
+                                                formControlName="fixCost" [ngClass]="{ 'form-error': f2.fixCost.invalid && (f2.fixCost.dirty || f2.fixCost.touched) }">
+
+                                        </div>
+                                        <div *ngIf="f2.fixCost.invalid && (f2.fixCost.dirty || f2.fixCost.touched)"
+                                            class="invalid-feedback form-error">
+                                            <div *ngIf="f2.fixCost.errors.required">این فیلد الزامی است</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                           
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class=" control-label">هر(دقیقه):</label>
+                                        <div class=" append-icon">
+                                            <input type="text" class="form-control" [(ngModel)]="currentMargin.intervalTime" 
+                                                formControlName="intervalTime" [ngClass]="{ 'form-error': f2.intervalTime.invalid && (f2.intervalTime.dirty || f2.intervalTime.touched) }">
+                                              
+
+                                        </div>
+                                        <div *ngIf="f2.intervalTime.invalid && (f2.intervalTime.dirty || f2.intervalTime.touched)"
+                                            class="invalid-feedback form-error">
+                                            <div *ngIf="f2.intervalTime.errors.required">این فیلد الزامی است</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class=" control-label">درصد افزایشی:</label>
+                                        <div class=" append-icon">
+                                            <input type="text" class="form-control" [(ngModel)]="currentMargin.percent"
+                                                formControlName="percent" [ngClass]="{ 'form-error': f2.percent.invalid && (f2.percent.dirty || f2.percent.touched) }">
+
+                                        </div>
+                                        <div *ngIf="f2.percent.invalid && (f2.percent.dirty || f2.percent.touched)"
+                                            class="invalid-feedback form-error">
+                                            <div *ngIf="f2.naPeriodicalCountme.errors.required">این فیلد الزامی است</div>
+                                        </div>
+                                    </div>
+                                </div>
+                               
+                                <div class="col-sm-2">
+                                  <br/>
+                                    <button class="btn btn-primary" (click)="saveMargin()">ثبت</button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 1%;">#</th>
+                                                <th>ازساعت</th>
+                                                <th>تاساعت</th>
+                                                <th>مبلغ ثابت</th>
+                                                <th>تعداد(دقیقه)</th>
+                                                <th>درصد</th>
+                                                <th>عملیات</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let item of ConditionMarginlist; index as i">
+                                                <td>{{i + 1}}</td>
+                                                <td>{{item.fromTime}}</td>
+                                                <td>{{item.toTime}}</td>
+                                                <td>{{item.fixCost}}</td>
+                                                <td>{{item.intervalTime}}</td>
+                                                <td>{{item.percent}}</td>
+                                                <td *ngIf="i == 0">
+                                                </td>
+                                                <td *ngIf="i > 0">
+                                                    <a class="edit btn btn-sm btn-primary" (click)="showAddEditConditionMarginTemp(item)"><i
+                                                            class="fa fa-edit"></i></a>
+                                                    <a class="edit btn btn-sm btn-danger" (click)="deleteConditionMargin(item)"><i
+                                                            class="fa fa-trash"></i></a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #deleteModalContent let-close="close">
+    <form>
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">حذف</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                                <span>آیا مایل به حذف این تعرفه می باشید؟</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-danger" (click)="delete()">حذف</button>
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #deleteConditionModalContent let-close="close">
+    <form>
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">حذف</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            آیامایل به حذف این شرایط می باشید؟
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-danger" (click)="deleteCondition(item)">حذف</button>
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+        </div>
+    </form>
+</ng-template>

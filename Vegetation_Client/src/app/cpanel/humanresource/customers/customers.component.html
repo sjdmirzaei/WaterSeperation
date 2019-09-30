@@ -1,0 +1,165 @@
+<div class="row">
+    <div class="col-md-12 portlets">
+        <div class="panel">
+            <div class="panel-header panel-controls">
+                <h3><i class="fa fa-table"></i>مشتریان</h3>
+                <div class="control-btn">
+                    <a (click)="showAddEdit(null)" class=""><i class="fa fa-plus"></i></a>
+                </div>
+            </div>
+            <div class="panel-content">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width: 1%;">#</th>
+                            <th>نام</th>
+                            <th>نام خانوادگی</th>
+                            <th>کد ملی</th>
+                            <th>شماره تلفن</th>
+                            <th>خودروهای انتسابی</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let customer of list; index as i">
+                            <td>{{i + 1}}</td>
+                            <td>{{customer.firstName}}</td>
+                            <td>{{customer.lastName}}</td>
+                            <td>{{customer.nationalCode}}</td>
+                            <td>{{customer.phone}}</td>
+                            <td><table><tr><td *ngFor="let car of customer.cars"><div class="badge badge-primary"><b >{{car.pelak}}</b></div></td></tr></table></td>
+                            <td>
+                                <a class="edit btn btn-sm btn-primary" (click)="showAddEdit(customer)"><i class="fa fa-edit"></i></a>
+                                <a class="edit btn btn-sm btn-danger" (click)="showDelete(customer)"><i class="fa fa-trash-alt"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <div class="dataTables_info" id="DataTables_Table_0_info" role="status" aria-live="polite">نمایش
+                            {{((page - 1)* 10) + 1}} تا
+                            {{page * 10 > listCount ? listCount : (page * 10)}} از
+                            {{listCount}} ایتم</div>
+                    </div>
+                    <div class="col-sm-7">
+                        <ngb-pagination [collectionSize]="listCount" [(page)]="page" [maxSize]="10" [boundaryLinks]="true"
+                            (pageChange)="load()"></ngb-pagination>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<ng-template #addEditModalContent let-close="close">
+    <form [formGroup]="addEditForm" (ngSubmit)="onSubmit()">
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">{{currentItem.id ? 'ویرایش' : 'ثبت'}}</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">نام</label>
+                                <div class="append-icon">
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.firstName"
+                                        formControlName="firstname" [ngClass]="{ 'form-error': f.firstname.invalid && (f.firstname.dirty || f.firstname.touched) }">
+                                    <i class="icon-user"></i>
+                                </div>
+                                <div *ngIf="f.firstname.invalid && (f.firstname.dirty || f.firstname.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.firstname.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">نام خانوادگی</label>
+                                <div class="append-icon">
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.lastName"
+                                        formControlName="lastname" [ngClass]="{ 'form-error': f.lastname.invalid && (f.lastname.dirty || f.lastname.touched) }">
+                                    <i class="icon-user"></i>
+                                </div>
+                                <div *ngIf="f.lastname.invalid && (f.lastname.dirty || f.lastname.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.lastname.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">کد ملی</label>
+                                <div class="append-icon">
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.nationalCode"
+                                        formControlName="nationalcode" [ngClass]="{ 'form-error': f.nationalcode.invalid && (f.nationalcode.dirty || f.nationalcode.touched) }">
+                                    <i class="icon-user"></i>
+                                </div>
+                                <div *ngIf="f.nationalcode.invalid && (f.nationalcode.dirty || f.nationalcode.touched)"
+                                    class="invalid-feedback form-error">
+                                    <div *ngIf="f.nationalcode.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">تلفن</label>
+                                <div class="append-icon">
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.phone"
+                                        formControlName="phone" [ngClass]="{ 'form-error': f.phone.invalid && (f.phone.dirty || f.phone.touched) }">
+                                    <i class="icon-user"></i>
+                                </div>
+                                <div *ngIf="f.phone.invalid && (f.phone.dirty || f.phone.touched)" class="invalid-feedback form-error">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">ثبت</button>
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #deleteModalContent let-close="close">
+    <form>
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">حذف</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            آیا مایل به حذف این مشتری می باشید؟
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-danger" (click)=delete()>حذف</button>
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+        </div>
+    </form>
+</ng-template>

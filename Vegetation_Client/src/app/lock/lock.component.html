@@ -1,0 +1,18 @@
+<div class="container" id="lockscreen-block">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-1">
+            <div class="account-wall">              
+                <form class="form-signin" role="form">
+                    <h2>خوش آمدید، <strong>{{fullname}}</strong> !</h2>
+                    <p>کلمه عبور را وارد کنید.</p>
+                    <div class="input-group"> 
+                        <input type="password" class="form-control" [(ngModel)]="password" name="password" id="password" placeholder="گذرواژه"> 
+                        <span class="input-group-btn"> 
+                        <button type="button" (click)="login()"  class="btn btn-primary">ورود</button>
+                        </span> 
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

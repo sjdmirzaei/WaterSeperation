@@ -1,0 +1,92 @@
+<div class="row">
+    <div class="col-md-12 portlets">
+        <div class="panel">
+            <div class="panel-header panel-controls">
+                <h3><i class="fa fa-table"></i>مشتریان</h3>
+            </div>
+            <div class="panel-content">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width: 1%;">#</th>
+                            <th>پلاک</th>
+                            <th>صاحب خودرو</th>
+                            <th>کد ملی صاحب خودرو</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let car of list; index as i">
+                            <td>{{i + 1}}</td>
+                            <td style="text-align:center;"><div class="badge badge-primary padding-left-5"><b>{{car.pelak}}</b></div></td>
+                            <td>{{car.customername}}</td>
+                            <td>{{car.customernationalcode}}</td>
+                            <td>
+                                <a class="edit btn btn-sm btn-primary" (click)="showAssignCustomer(car)"><i class="fa fa-edit"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <div class="dataTables_info" id="DataTables_Table_0_info" role="status" aria-live="polite">نمایش
+                            {{((page - 1)* 10) + 1}} تا
+                            {{page * 10 > listCount ? listCount : (page * 10)}} از
+                            {{listCount}} ایتم</div>
+                    </div>
+                    <div class="col-sm-7">
+                        <ngb-pagination [collectionSize]="listCount" [(page)]="page" [maxSize]="10" [boundaryLinks]="true"
+                            (pageChange)="load()"></ngb-pagination>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<ng-template #assignCustomerModalContent let-close="close">
+    <form [formGroup]="assignCustomerForm" (ngSubmit)="onSubmit()">
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">انتساب مشتری</h5>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label">مشتری</label>
+                                <div class="append-icon">
+                                    <select class="form-control" formControlName="customerId" [(ngModel)]="currentItem.customerId"
+                                        [ngClass]="{ 'form-error': f.customerId.invalid && (f.customerId.dirty || f.customerId.touched) }">
+
+                                        <option *ngFor="let item of customerList" [ngValue]="item.id">
+                                            {{item.firstName}} {{item.lastName}} - {{item.nationalCode}}
+                                        </option>
+
+                                    </select>
+
+                                </div>
+                                <div *ngIf="f.customerId.invalid && (f.customerId.dirty || f.customerId.touched)"
+                                    class="invalid-feedback form-error">
+                                </div>
+                            </div>
+                        </div>      
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">ثبت</button>
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+        </div>
+    </form>
+</ng-template> 
+

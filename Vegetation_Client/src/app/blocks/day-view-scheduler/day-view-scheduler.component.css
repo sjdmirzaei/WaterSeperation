@@ -1,0 +1,55 @@
+  .day-view-column-header {
+    width: 100px;
+    border-top: dashed 1px #e1e1e1;
+    text-align: center;
+    float: right;
+  }
+
+  .day-view-column-parent-header {    
+    border: solid 1px #e1e1e1;
+    border-bottom: 0px;
+    text-align: center;
+    float: right;
+  }
+
+  .day-view-column-headers
+  {
+    display: flex;
+    margin-left: 0px;
+    margin-right: 70px;
+    
+  }
+
+  .cal-drag-over
+  {
+    border: 2px dashed dimgrey;
+  }
+
+  .cal-drag-active{
+    background-color: #e4e4e4;
+  }
+
+  .cal-day-view .cal-event{
+    border-radius : 0 0 0 0;
+    background-color: #dedede;
+    border : 2px dashed grey;
+    color:black;
+  }
+
+  .cal-event .fa-user-shield , .cal-event .fa-user-graduate {
+    font-size: 30px;
+    color : grey;
+  }
+
+  .cal-event .fa-user-shield.selected , .cal-event .fa-user-graduate.selected {    
+    color  : black;
+  }
+
+  .cal-event .row{
+    padding: 10px;    
+}
+
+  .cal-event .col{
+      padding: 0;
+      text-align: center;
+  }

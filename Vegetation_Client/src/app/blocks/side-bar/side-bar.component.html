@@ -1,0 +1,94 @@
+<div class="sidebar">
+    <div class="logopanel">
+        <h1>
+            <a [routerLink]="['/cpanel/dashboard']" style="background-image: none !important;">سامانه هوشمند فضای سبز شهرداری</a>
+        </h1>
+    </div>
+    <div class="sidebar-inner" id="scrt">
+        <div class="sidebar-top">
+            <form action="search-result.html" method="post" class="searchform" id="search-results">
+                <input type="text" class="form-control" name="keyword" placeholder="جستجو ..." (click)="showMorphSearch()">
+            </form>
+            <div class="userlogged clearfix">
+                <i class="icon icons-faces-users-01"></i>
+                <div class="user-details">
+                    <h4>{{username}}</h4>
+                    <div class="dropdown user-login">
+                        <button class="btn btn-xs dropdown-toggle btn-rounded" type="button" data-toggle="dropdown"
+                            data-hover="dropdown" data-close-others="true" data-delay="300">
+                            <span>{{currentRole.title}}</span>
+                            <i class="fa fa-angle-down"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li *ngFor="let role of roles;index as i">
+                                <a (click)="selectRole(i)" *ngIf="role.id != currentRole.id"><span>{{role.title}}</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ul class="nav nav-sidebar">
+            <li>
+                <a [routerLink]="['/cpanel/dashboard']">
+                    <i class="fa fa-home"></i>
+                    <span>داشبورد</span>
+                </a>
+            </li>
+
+            <li *ngFor="let menu of menuList" class="nav-parent" id="menu{{menu.id}}">
+                <a  *ngIf="menu.hasChild" href="javascript:void(0)" (click)="!menu.hasChild || showChilds(menu.id)">
+                    <i [ngClass]="menu.icon"></i>
+                    <span>{{menu.title}}</span>
+                    <span *ngIf="menu.hasChild" class="fa arrow"></span>
+                </a>
+                <a  *ngIf="!menu.hasChild" [routerLink]="[menu.url]" (click)="!menu.hasChild || showChilds(menu.id)">
+                        <i [ngClass]="menu.icon"></i>
+                        <span>{{menu.title}}</span>
+                        <span *ngIf="menu.hasChild" class="fa arrow"></span>
+                    </a>
+                    
+                <ul *ngIf="menu.hasChild" class="children collapse">
+                    <li *ngFor="let cmenu of menu.chlilds">
+                        <a [routerLink]="[cmenu.url]">
+                            <i [ngClass]="cmenu.icon"></i>
+                            <span>{{cmenu.title}}</span>
+                        </a>
+                    </li>
+
+                </ul>
+
+            </li>
+        </ul>
+        <!-- SIDEBAR WIDGET FOLDERS -->
+        <!-- <div class="sidebar-widgets">
+            <p class="menu-title widget-title">تنظیمات                
+            </p>
+            <ul class="folders">
+                <li>
+                    <a [routerLink]="['/cpanel/subsystems']">
+                        <i class="icon-doc c-primary"></i>زیر سیستم ها</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/cpanel/menus']">
+                        <i class="icon-picture"></i>منو ها</a>
+                </li>              
+            </ul>
+        </div> -->
+        <div class="sidebar-footer clearfix">
+            <a class="pull-left footer-settings" [routerLink]="['/cpanel/settings']" placement="top" tooltip="تنظیمات">
+                <i class="icon-settings"></i>
+            </a>
+            <a class="pull-left toggle_fullscreen" href="javascript:void(0);" (click)="fullscreen()" placement="top"
+                tooltip="تمام صفحه">
+                <i class="icon-size-fullscreen"></i>
+            </a>
+            <a class="pull-left" (click)="lock()" placement="top" tooltip="قفل حساب کاربری">
+                <i class="icon-lock"></i>
+            </a>
+            <a class="pull-left btn-effect" (click)="logout()" placement="top" tooltip="خروج از حساب کاربری">
+                <i class="icon-power"></i>
+            </a>
+        </div>
+    </div>
+</div>

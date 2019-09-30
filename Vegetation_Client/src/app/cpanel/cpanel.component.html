@@ -1,0 +1,40 @@
+<section>
+    <app-side-bar (showSearch)="showMorphSearch()"></app-side-bar>
+    <div class="main-content">
+        <app-top-bar></app-top-bar>
+        <div class="page-content">
+            <div class="header">
+                <div class="breadcrumb-wrapper">
+                    <ol class="breadcrumb">
+                        <li><a href="javascript:void(0)">فضای سبز شهرداری</a>
+                        </li>
+                        <li *ngIf="subsystem"><a href="javascript:void(0)">{{subsystem}}</a>
+                        </li>
+                        <li class="active">{{header}}</li>
+                    </ol>
+                </div>
+            </div>
+            <!-- <div class="row">
+                <div class="col-lg-12" style="min-height:720px;margin-top: 40px;">
+                    <router-outlet></router-outlet>
+                </div>
+            </div> -->
+             <!-- <div class="row"> -->
+                <div class="MapDashboard" style="margin-top: 20px">
+                    <router-outlet></router-outlet>
+                </div>
+            <!-- </div> -->
+            <app-footer></app-footer>
+        </div>
+    </div>
+</section>
+kg;lk;dkfgsdk
+glkjsljgljd
+sample
+<app-builder></app-builder>
+<app-quickview></app-quickview>
+<app-morphsearch></app-morphsearch>
+<app-loader></app-loader>
+
+
+<a href="#" class="scrollup"><i class="fa fa-angle-up"></i></a>

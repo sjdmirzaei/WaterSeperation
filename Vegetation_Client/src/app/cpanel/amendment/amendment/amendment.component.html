@@ -1,0 +1,206 @@
+<div class="row">
+    <div class="col-md-12 portlets">
+        <div class="panel">
+            <div class="panel-header panel-controls">
+                <h3><i class="fa fa-table"></i>اصلاحیه</h3>
+                <div class="control-btn">
+                    <a (click)="showAddEdit(null)" class=""><i class="fa fa-plus"></i></a>
+                </div>
+            </div>
+            <div class="panel-content">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width: 1%;">#</th>
+                            <th>پلاک</th>
+                            <th>نوع تراکنش</th>
+                            <th>مبلغ</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="list.length > 0">
+                            <tr *ngFor="let item of list; index as i">
+                                <td>{{i + 1}}</td>
+                                <td style="text-align:center;"><div class="badge badge-primary padding-left-5"><b>{{item.pelak}}</b></div></td>
+                                <td>{{item.transactiontypetitle}}</td>
+                                <td>{{item.value}}</td>
+                                <td>
+
+                                    <a class="edit btn btn-sm btn-primary"><i class="fa fa-edit"></i></a>
+                                    <a class="edit btn btn-sm btn-danger"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <tr *ngIf="list.length == 0">
+                            <td colspan="8" style="text-align:center;">ایتمی جهت نمایش وجود ندارد.</td>
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <div class="dataTables_info" id="DataTables_Table_0_info" role="status" aria-live="polite">نمایش
+                            {{((page - 1)* 10) + 1}} تا
+                            {{page * 10 > listCount ? listCount : (page * 10)}} از
+                            {{listCount}} ایتم</div>
+                    </div>
+                    <div class="col-sm-7">
+                        <ngb-pagination [collectionSize]="listCount" [(page)]="page" [maxSize]="10" [boundaryLinks]="true"
+                            (pageChange)="load()"></ngb-pagination>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<ng-template #addEditModalContent let-close="close">
+    <form [formGroup]="addEditForm" (ngSubmit)="onSubmit()">
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">{{currentItem.id ? 'ویرایش' : 'ثبت'}}</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="control-label">پلاک</label>
+                                <div class="append-icon">
+                                    <input type="number" maxlength="2" class="form-control" [(ngModel)]="currentItem.pelaksection4"
+                                        formControlName="pelaksection4" [ngClass]="{ 'form-error': f.pelaksection4.invalid && (f.pelaksection4.dirty || f.pelaksection4.touched) }">
+
+                                </div>
+                                <div *ngIf="f.pelaksection4.invalid && (f.pelaksection4.dirty || f.pelaksection4.touched)"
+                                    class="invalid-feedback form-error">
+                                    <div *ngIf="f.pelaksection4.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="control-label"></label>
+                                <div class="append-icon">
+                                    <input type="number" maxlength="3" class="form-control" [(ngModel)]="currentItem.pelaksection3"
+                                        formControlName="pelaksection3" [ngClass]="{ 'form-error': f.pelaksection3.invalid && (f.pelaksection3.dirty || f.pelaksection3.touched) }">
+
+                                </div>
+                                <div *ngIf="f.pelaksection3.invalid && (f.pelaksection3.dirty || f.pelaksection3.touched)"
+                                    class="invalid-feedback form-error">
+                                    <div *ngIf="f.pelaksection3.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="control-label"></label>
+                                <div class="append-icon">
+                                    <select class="form-control" formControlName="pelaksection2" [(ngModel)]="currentItem.pelaksection2"
+                                        [ngClass]="{ 'form-error': f.pelaksection2.invalid && (f.pelaksection2.dirty || f.pelaksection2.touched) }">
+
+                                        <option *ngFor="let item of pelakletterList" [ngValue]="item.title">
+                                            {{item.title}}
+                                        </option>
+
+                                    </select>
+
+                                </div>
+                                <div *ngIf="f.pelaksection2.invalid && (f.pelaksection2.dirty || f.pelaksection2.touched)"
+                                    class="invalid-feedback form-error">
+                                    <div *ngIf="f.pelaksection2.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="control-label"></label>
+                                <div class="append-icon">
+                                    <input type="number" maxlength="2" class="form-control" [(ngModel)]="currentItem.pelaksection1"
+                                        formControlName="pelaksection1" [ngClass]="{ 'form-error': f.pelaksection1.invalid && (f.pelaksection1.dirty || f.pelaksection1.touched) }">
+
+                                </div>
+                                <div *ngIf="f.pelaksection1.invalid && (f.pelaksection1.dirty || f.pelaksection1.touched)"
+                                    class="invalid-feedback form-error">
+                                    <div *ngIf="f.pelaksection1.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label">نوع تراکنش</label>
+                                <div class="append-icon">
+                                    <select class="form-control" formControlName="transactiontypeidref" [(ngModel)]="currentItem.transactiontypeidref"
+                                        [ngClass]="{ 'form-error': f.transactiontypeidref.invalid && (f.transactiontypeidref.dirty || f.transactiontypeidref.touched) }">
+
+                                        <option *ngFor="let item of transactionTypeList" [ngValue]="item.id">
+                                            {{item.title}}
+                                        </option>
+
+                                    </select>
+
+                                </div>
+                                <div *ngIf="f.transactiontypeidref.invalid && (f.transactiontypeidref.dirty || f.transactiontypeidref.touched)"
+                                    class="invalid-feedback form-error">
+                                    <div *ngIf="f.transactiontypeidref.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label">مبلغ</label>
+                                <div class="append-icon">
+                                    <input type="number" class="form-control" [(ngModel)]="currentItem.value"
+                                        formControlName="value" [ngClass]="{ 'form-error': f.value.invalid && (f.value.dirty || f.value.touched) }">
+
+                                </div>
+                                <div *ngIf="f.value.invalid && (f.value.dirty || f.value.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.value.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">ثبت</button>
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #deleteModalContent let-close="close">
+    <form>
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">حذف</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            آیا مایل به حذف این اصلاحیه می باشید؟
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-danger" (click)=delete()>حذف</button>
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+        </div>
+    </form>
+</ng-template>

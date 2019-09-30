@@ -1,0 +1,168 @@
+<div class="row">
+    <div class="col-md-12 portlets">
+        <div class="panel">
+            <div class="panel-header panel-controls">
+                <h3><i class="fa fa-table"></i>شیفت ها</h3>
+                <div class="control-btn">
+                    <a (click)="showAddEdit(null)" class=""><i class="fa fa-plus"></i></a>
+                </div>
+            </div>
+            <div class="panel-content">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width: 1%;">#</th>
+                            <th>نام</th>
+                            <th>ساعت شروع</th>
+                            <th>ساعت پایان</th>
+                            <th>تاخیر ساعت شروع</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let shift of list; index as i">
+                            <td>{{i + 1}}</td>
+                            <td>{{shift.name}}</td>
+                            <td>{{shift.startTime}}</td>
+                            <td>{{shift.endTime}}</td>
+                            <td>{{shift.startDelay}}</td>
+                            <td>
+                                <a class="edit btn btn-sm btn-primary" (click)="showAddEdit(shift)"><i class="fa fa-edit"></i></a>
+                                <a class="edit btn btn-sm btn-danger" (click)="showDelete(shift)"><i class="fa fa-trash-alt"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <div class="dataTables_info" id="DataTables_Table_0_info" role="status" aria-live="polite">نمایش
+                            {{((page - 1)* 10) + 1}} تا
+                            {{page * 10 > listCount ? listCount : (page * 10)}} از
+                            {{listCount}} ایتم</div>
+                    </div>
+                    <div class="col-sm-7">
+                        <ngb-pagination [collectionSize]="listCount" [(page)]="page" [maxSize]="10" [boundaryLinks]="true"
+                            (pageChange)="load()"></ngb-pagination>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<ng-template #addEditModalContent let-close="close">
+    <form [formGroup]="addEditForm">
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">{{currentItem.id ? 'ویرایش' : 'ثبت'}}</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">نام</label>
+                                <div class="append-icon">
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.name"
+                                        formControlName="name" [ngClass]="{ 'form-error': f.name.invalid && (f.name.dirty || f.name.touched) }">
+                                    <i class="icon-user"></i>
+                                </div>
+                                <div *ngIf="f.name.invalid && (f.name.dirty || f.name.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.name.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">ساعت شروع</label>
+                                <div class="append-icon">
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.startTime"
+                                        formControlName="startTime" [ngClass]="{ 'form-error': f.startTime.invalid && (f.startTime.dirty || f.startTime.touched) }"
+                                        pattern="[012]+[0-9]+\:(00|15|30|45)+" dir="ltr">
+                                    <i class="icon-clock"></i>
+                                </div>
+                                <div *ngIf="f.startTime.invalid && (f.startTime.dirty || f.startTime.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.startTime.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">ساعت پایان</label>
+                                <div class="append-icon">
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.endTime" dir="ltr"
+                                        formControlName="endTime" [ngClass]="{ 'form-error': f.endTime.invalid && (f.endTime.dirty || f.endTime.touched) }"
+                                        pattern="[012]+[0-9]+\:(00|15|30|45)+" dir="ltr">
+                                    <i class="icon-clock"></i>
+                                </div>
+                                <div *ngIf="f.endTime.invalid && (f.endTime.dirty || f.endTime.touched)" class="invalid-feedback form-error">
+                                    <div *ngIf="f.endTime.errors.required">این فیلد الزامی است</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label">تاخیر ساعت شروع</label>
+                                <div class="append-icon">
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.startDelay" dir="ltr"
+                                        formControlName="startDelay" [ngClass]="{ 'form-error': f.startDelay.invalid && (f.startDelay.dirty || f.startDelay.touched) }"
+                                        pattern="(^$|([012]+[0-9]+\:(00|15|30|45)+))" dir="ltr">
+                                    <i class="icon-clock"></i>
+                                </div>
+                                <div *ngIf="f.startDelay.invalid && (f.startDelay.dirty || f.startDelay.touched)" class="invalid-feedback form-error">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" (click)="onSubmit()">ثبت</button>
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #deleteModalContent let-close="close">
+    <form>
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title">حذف</h5>
+            <button type="button" class="close" (click)="close()">
+                <i class="icons-office-52"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            آیا مایل به حذف این شیفت می باشید؟
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-danger" (click)=delete()>حذف</button>
+            <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+        </div>
+    </form>
+</ng-template>

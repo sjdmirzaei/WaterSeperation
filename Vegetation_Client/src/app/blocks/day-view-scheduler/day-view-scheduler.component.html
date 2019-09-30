@@ -1,0 +1,58 @@
+<ng-template #customCellTemplate let-dayEvent="dayEvent" let-locale="locale" >
+    <div style="height:100%;" (click)="eventClicked.emit({event: dayEvent.event})">
+        <div class="cal-event" style="text-align: center">
+            <h4>{{dayEvent.event.title}}</h4>
+            <div class="row">
+                <div class="col col-md-12">
+
+                </div>
+                <div class="col col-md-12">
+                    
+                </div>
+                <div class="col col-md-6">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <div class="col col-md-6">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+            </div>
+            <i class="fa fa-user" *ngIf="dayEvent.event.meta.studentId"></i>
+        </div>        
+    </div>    
+</ng-template>
+
+<div class="cal-day-view" #dayViewContainer>
+
+    <div class="day-view-column-headers">
+        <div class="day-view-column-parent-header" *ngFor="let street of streets">
+            <h6>{{street.name}}</h6>
+            <div class="day-view-column-header" *ngFor="let zone of street.zones" mwlDroppable dragActiveClass="cal-drag-active"  dragOverClass="cal-drag-over" (drop)="eventDropped($event.dropData.event , zone)">
+                <h6>{{zone.name}}</h6>
+            </div>
+        </div>
+    </div>
+    <div class="cal-hour-rows">
+        <div class="cal-events">
+            <div #event *ngFor="let dayEvent of view?.events; trackBy:trackByDayEvent" class="cal-event-container"
+                [class.cal-draggable]="dayEvent.event.draggable" [class.cal-starts-within-day]="!dayEvent.startsBeforeDay"
+                [class.cal-ends-within-day]="!dayEvent.endsAfterDay" [ngClass]="dayEvent.event.cssClass" mwlResizable
+                [resizeEdges]="{top: dayEvent.event?.resizable?.beforeStart, bottom: dayEvent.event?.resizable?.afterEnd}"
+                [resizeSnapGrid]="{top: eventSnapSize, bottom: eventSnapSize}" [validateResize]="validateResize"
+                (resizeStart)="resizeStarted(dayEvent, $event, dayViewContainer)" (resizing)="resizing(dayEvent, $event)"
+                (resizeEnd)="resizeEnded(dayEvent)" [style.marginTop.px]="dayEvent.top" [style.height.px]="dayEvent.height - 1"
+                [style.marginRight.px]="dayEvent.left + 70" [style.width.px]="99">
+                <mwl-calendar-day-view-event [dayEvent]="dayEvent" [tooltipPlacement]="tooltipPlacement"
+                    [tooltipTemplate]="tooltipTemplate" [tooltipAppendToBody]="tooltipAppendToBody" [customTemplate]="eventTemplate"
+                    [eventTitleTemplate]="eventTitleTemplate" [eventActionsTemplate]="eventActionsTemplate"
+                    (eventTimesChanged)="eventTimesChanged.emit({event: dayEvent.event})">
+                </mwl-calendar-day-view-event>
+            </div>
+        </div>
+        <div class="cal-hour" *ngFor="let hour of hours; trackBy:trackByHour" [style.minWidth.px]="view?.width + 70">
+            <mwl-calendar-day-view-hour-segment *ngFor="let segment of hour.segments; trackBy:trackByHourSegment"
+                [style.height.px]="hourSegmentHeight" [segment]="segment" [segmentHeight]="hourSegmentHeight" [locale]="locale"
+                [customTemplate]="hourSegmentTemplate">
+            </mwl-calendar-day-view-hour-segment>
+        </div>
+    </div>
+</div>

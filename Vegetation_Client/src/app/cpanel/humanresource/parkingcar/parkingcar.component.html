@@ -1,0 +1,513 @@
+<div class="row">
+    <div class="col-md-12 portlets">
+        <div class="panel">
+            <div class="panel-header panel-controls">
+                <h3><i class="fa fa-table"></i>ثبت ورود و خروج ماشین ها </h3>
+            </div>
+            <div class="panel-content">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label class="control-label">پارکینگ</label>
+
+                            <select class="form-control" (change)="onChange($event.target.value)" [(ngModel)]="parkingId">
+
+                                <option *ngFor="let parking of parkinglist" [ngValue]="parking.id">
+                                    {{parking.name}} </option>
+
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="control-btn">
+                        <a class="" [class.disabled]="parkingId==null" (click)="parkingId!=null && showAddEdit(null)"><i
+                                class="fa fa-plus"></i></a>
+                        <br />
+                        <a class="" [class.disabled]="parkingId==null" (click)="parkingId!=null && showCharge(null)"><i
+                                class="fas fa-charging-station"></i></a>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+
+        </div>
+        <div *ngIf="parkingId!=null">
+            <div class="panel">
+                <div class="panel-header panel-controls">
+                    <h3><i class="fa fa-table"></i>لیست ماشین</h3>
+
+                </div>
+                <div class="panel-content">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="width: 1%;">#</th>
+                                <th>پلاک</th>
+                                <th>تاریخ ورود</th>
+                                <th>زمان ورود </th>
+                                <th>مالک</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of ParkingCarlist; index as i">
+                                <td>{{i + 1}}</td>
+                                <td>{{item.car.pelak}}</td>
+                                <td>{{item.entrancedate}}</td>
+                                <td>{{item.entrancetime}}</td>
+                                <td>{{item.customer.lastname}}</td>
+                                <td>
+                                    <a class="edit btn btn-sm btn-primary" (click)="showExit(item)"><i class="fas fa-external-link-alt"></i></a>
+                                </td>
+                            </tr>
+                            <tr *ngIf="ParkingCarlist && ParkingCarlist.length == 0">
+                                <td style="text-align:center;" colspan="6">آیتمی برای نمایش وجود ندارد</td>                                
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <div class="dataTables_info" id="DataTables_Table_0_info" role="status" aria-live="polite">نمایش
+                                {{((page - 1)* 10) + 1}} تا
+                                {{page * 10 > parkinglistCount ? parkinglistCount : (page * 10)}} از
+                                {{parkinglistCount}} ایتم</div>
+                        </div>
+                        <div class="col-sm-7">
+                            <ngb-pagination [collectionSize]="parkinglistCount" [(page)]="page" [maxSize]="10"
+                                [boundaryLinks]="true" (pageChange)="load()"></ngb-pagination>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <ng-template #addEditModalContent let-close="close">
+        <form [formGroup]="addEditForm" (ngSubmit)="onSubmit()">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title">{{currentItem.id ? 'ویرایش' : 'ثبت'}}</h5>
+                <button type="button" class="close" (click)="close()">
+                    <i class="icons-office-52"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert media fade in alert-danger" *ngIf="currentItem.carID==0 && currentItem.hasCharge==false">
+                    <p><strong>خطا!</strong> خودرو درج نشده است لطفا اطلاعات راننده را وارد نمایید</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label">پلاک</label>
+                                    <div class="append-icon">
+                                        <input type="number" maxlength="2" class="form-control" [(ngModel)]="currentItem.pelaksection4"
+                                            (input)="currentItem.carID==0 && currentItem.hasCharge==false && onSearchChange($event.target.value)"
+                                            formControlName="pelaksection4" [ngClass]="{ 'form-error': f.pelaksection4.invalid && (f.pelaksection4.dirty || f.pelaksection4.touched) }">
+
+                                    </div>
+                                    <div *ngIf="f.pelaksection4.invalid && (f.pelaksection4.dirty || f.pelaksection4.touched)"
+                                        class="invalid-feedback form-error">
+                                        <div *ngIf="f.pelaksection4.errors.required">این فیلد الزامی است</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label"></label>
+                                    <div class="append-icon">
+                                        <input type="number" maxlength="3" class="form-control" [(ngModel)]="currentItem.pelaksection3"
+                                            (input)="currentItem.carID==0 && currentItem.hasCharge==false && onSearchChange($event.target.value)"
+                                            formControlName="pelaksection3" [ngClass]="{ 'form-error': f.pelaksection3.invalid && (f.pelaksection3.dirty || f.pelaksection3.touched) }">
+
+                                    </div>
+                                    <div *ngIf="f.pelaksection3.invalid && (f.pelaksection3.dirty || f.pelaksection3.touched)"
+                                        class="invalid-feedback form-error">
+                                        <div *ngIf="f.pelaksection3.errors.required">این فیلد الزامی است</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label"></label>
+                                    <div class="append-icon">
+                                        <select class="form-control" formControlName="pelaksection2" [(ngModel)]="currentItem.pelaksection2"
+                                            (input)="currentItem.carID==0 && currentItem.hasCharge==false && onSearchChange($event.target.value)"
+                                            [ngClass]="{ 'form-error': f.pelaksection2.invalid && (f.pelaksection2.dirty || f.pelaksection2.touched) }">
+
+                                            <option *ngFor="let item of pelakletterList" [ngValue]="item.title">
+                                                {{item.title}}
+                                            </option>
+
+                                        </select>
+
+                                    </div>
+                                    <div *ngIf="f.pelaksection2.invalid && (f.pelaksection2.dirty || f.pelaksection2.touched)"
+                                        class="invalid-feedback form-error">
+                                        <div *ngIf="f.pelaksection2.errors.required">این فیلد الزامی است</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label"></label>
+                                    <div class="append-icon">
+                                        <input type="number" maxlength="2" class="form-control" [(ngModel)]="currentItem.pelaksection1"
+                                            (input)="currentItem.carID==0 && currentItem.hasCharge==false && onSearchChange($event.target.value)"
+                                            formControlName="pelaksection1" [ngClass]="{ 'form-error': f.pelaksection1.invalid && (f.pelaksection1.dirty || f.pelaksection1.touched) }">
+
+                                    </div>
+                                    <div *ngIf="f.pelaksection1.invalid && (f.pelaksection1.dirty || f.pelaksection1.touched)"
+                                        class="invalid-feedback form-error">
+                                        <div *ngIf="f.pelaksection1.errors.required">این فیلد الزامی است</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label">تاریخ ورود</label>
+
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.entrancedate"
+                                        formControlName="entrancedate" [ngClass]="{ 'form-error': f.entrancedate.invalid && (f.entrancedate.dirty || f.entrancedate.touched) }">
+
+                                    <div *ngIf="f.entrancedate.invalid && (f.entrancedate.dirty || f.entrancedate.touched)"
+                                        class="invalid-feedback form-error">
+                                        <div *ngIf="f.entrancedate.errors.required">این فیلد الزامی است</div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label">زمان ورود</label>
+
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.entrancetime"
+                                        formControlName="entrancetime" [ngClass]="{ 'form-error': f.entrancetime.invalid && (f.entrancetime.dirty || f.entrancetime.touched) }">
+
+                                    <div *ngIf="f.entrancetime.invalid && (f.entrancetime.dirty || f.entrancetime.touched)"
+                                        class="invalid-feedback form-error">
+                                        <div *ngIf="f.entrancetime.errors.required">این فیلد الزامی است</div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label">شماره کارت</label>
+
+                                    <input type="text" class="form-control" [(ngModel)]="currentItem.cardNo"
+                                        formControlName="cardNo" [ngClass]="{ 'form-error': f.cardNo.invalid && (f.cardNo.dirty || f.cardNo.touched) }">
+
+                                    <div *ngIf="f.cardNo.invalid && (f.cardNo.dirty || f.cardNo.touched)"
+                                        class="invalid-feedback form-error">
+                                        <div *ngIf="f.cardNo.errors.required">این فیلد الزامی است</div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div *ngIf="currentItem.carID==0 && currentItem.hasCharge==false">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label">نام</label>
+                                        <div class="append-icon">
+                                            <input type="text" class="form-control" [(ngModel)]="currentItem.customer.firstName"
+                                                formControlName="firstname" [ngClass]="{ 'form-error': f.firstname.invalid && (f.firstname.dirty || f.firstname.touched) }">
+                                            <i class="icon-user"></i>
+                                        </div>
+                                        <div *ngIf="f.firstname.invalid && (f.firstname.dirty || f.firstname.touched)"
+                                            class="invalid-feedback form-error">
+                                            <div *ngIf="f.firstname.errors.required">این فیلد الزامی است</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label">نام خانوادگی</label>
+                                        <div class="append-icon">
+                                            <input type="text" class="form-control" [(ngModel)]="currentItem.customer.lastName"
+                                                formControlName="lastname" [ngClass]="{ 'form-error': f.lastname.invalid && (f.lastname.dirty || f.lastname.touched) }">
+                                            <i class="icon-user"></i>
+                                        </div>
+                                        <div *ngIf="f.lastname.invalid && (f.lastname.dirty || f.lastname.touched)"
+                                            class="invalid-feedback form-error">
+                                            <div *ngIf="f.lastname.errors.required">این فیلد الزامی است</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label">کد ملی</label>
+                                        <div class="append-icon">
+                                            <input type="text" class="form-control" [(ngModel)]="currentItem.customer.nationalCode"
+                                                formControlName="nationalcode" [ngClass]="{ 'form-error': f.nationalcode.invalid && (f.nationalcode.dirty || f.nationalcode.touched) }">
+                                            <i class="icon-user"></i>
+                                        </div>
+                                        <div *ngIf="f.nationalcode.invalid && (f.nationalcode.dirty || f.nationalcode.touched)"
+                                            class="invalid-feedback form-error">
+                                            <div *ngIf="f.nationalcode.errors.required">این فیلد الزامی است</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label">تلفن</label>
+                                        <div class="append-icon">
+                                            <input type="text" class="form-control" [(ngModel)]="currentItem.customer.phone"
+                                                formControlName="phone" [ngClass]="{ 'form-error': f.phone.invalid && (f.phone.dirty || f.phone.touched) }">
+                                            <i class="icon-user"></i>
+                                        </div>
+                                        <div *ngIf="f.phone.invalid && (f.phone.dirty || f.phone.touched)" class="invalid-feedback form-error">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">ثبت</button>
+                <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+            </div>
+        </form>
+    </ng-template>
+
+    <ng-template #chargeModalContent let-close="close">
+        <form [formGroup]="chargeForm" (ngSubmit)="onSubmit()">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title">افزایش شارز</h5>
+                <button type="button" class="close" (click)="close()">
+                    <i class="icons-office-52"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert media fade in alert-danger" *ngIf="currentItem.carNotFount">
+                    <p><strong>خطا!</strong> خودرو درج نشده است لطفا اطلاعات راننده را وارد نمایید</p>
+                </div>
+                <div class="alert media fade in alert-danger" *ngIf="currentItem.carID!=0 && currentItem.hasCharge==false">
+                    <p><strong>خطا!</strong>شارژ خودرو از مبلغ تعیین شده کمتر است</p>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label">پلاک</label>
+                                    <div class="append-icon">
+                                        <input type="number" maxlength="2" class="form-control" [(ngModel)]="currentItem.pelaksection4"
+                                            formControlName="pelaksection4" [ngClass]="{ 'form-error': c.pelaksection4.invalid && (c.pelaksection4.dirty || c.pelaksection4.touched) }">
+
+                                    </div>
+                                    <div *ngIf="c.pelaksection4.invalid && (c.pelaksection4.dirty || c.pelaksection4.touched)"
+                                        class="invalid-feedback form-error">
+                                        <div *ngIf="c.pelaksection4.errors.required">این فیلد الزامی است</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label"></label>
+                                    <div class="append-icon">
+                                        <input type="number" maxlength="3" class="form-control" [(ngModel)]="currentItem.pelaksection3"
+                                            formControlName="pelaksection3" [ngClass]="{ 'form-error': c.pelaksection3.invalid && (c.pelaksection3.dirty || c.pelaksection3.touched) }">
+
+                                    </div>
+                                    <div *ngIf="c.pelaksection3.invalid && (c.pelaksection3.dirty || c.pelaksection3.touched)"
+                                        class="invalid-feedback form-error">
+                                        <div *ngIf="c.pelaksection3.errors.required">این فیلد الزامی است</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label"></label>
+                                    <div class="append-icon">
+                                        <select class="form-control" formControlName="pelaksection2" [(ngModel)]="currentItem.pelaksection2"
+                                            [ngClass]="{ 'form-error': c.pelaksection2.invalid && (c.pelaksection2.dirty || c.pelaksection2.touched) }">
+
+                                            <option *ngFor="let item of pelakletterList" [ngValue]="item.title">
+                                                {{item.title}}
+                                            </option>
+
+                                        </select>
+
+                                    </div>
+                                    <div *ngIf="c.pelaksection2.invalid && (c.pelaksection2.dirty || c.pelaksection2.touched)"
+                                        class="invalid-feedback form-error">
+                                        <div *ngIf="c.pelaksection2.errors.required">این فیلد الزامی است</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label"></label>
+                                    <div class="append-icon">
+                                        <input type="number" maxlength="2" class="form-control" [(ngModel)]="currentItem.pelaksection1"
+                                            formControlName="pelaksection1" [ngClass]="{ 'form-error': c.pelaksection1.invalid && (c.pelaksection1.dirty || c.pelaksection1.touched) }">
+
+                                    </div>
+                                    <div *ngIf="c.pelaksection1.invalid && (c.pelaksection1.dirty || c.pelaksection1.touched)"
+                                        class="invalid-feedback form-error">
+                                        <div *ngIf="c.pelaksection1.errors.required">این فیلد الزامی است</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label">میزان شارژ</label>
+                                    <div class="append-icon">
+                                        <input type="text" class="form-control" [(ngModel)]="currentItem.chargeamount"
+                                            formControlName="charge" [ngClass]="{ 'form-error': c.charge.invalid && (c.charge.dirty || c.charge.touched) }">
+                                        <i class="icon-user"></i>
+                                    </div>
+                                    <div *ngIf="c.charge.invalid && (c.charge.dirty || c.charge.touched)" class="invalid-feedback form-error">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="currentItem.carNotFount">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label">نام</label>
+                                        <div class="append-icon">
+                                            <input type="text" class="form-control" [(ngModel)]="currentItem.customer.firstName"
+                                                formControlName="firstname" [ngClass]="{ 'form-error': c.firstname.invalid && ( c.firstname.dirty || c.firstname.touched) }">
+                                            <i class="icon-user"></i>
+                                        </div>
+                                        <div *ngIf="c.firstname.invalid && (c.firstname.dirty || c.firstname.touched)"
+                                            class="invalid-feedback form-error">
+                                            <div *ngIf="c.firstname.errors.required">این فیلد الزامی است</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label">نام خانوادگی</label>
+                                        <div class="append-icon">
+                                            <input type="text" class="form-control" [(ngModel)]="currentItem.customer.lastName"
+                                                formControlName="lastname" [ngClass]="{ 'form-error': c.lastname.invalid && (c.lastname.dirty || c.lastname.touched) }">
+                                            <i class="icon-user"></i>
+                                        </div>
+                                        <div *ngIf="c.lastname.invalid && (c.lastname.dirty || c.lastname.touched)"
+                                            class="invalid-feedback form-error">
+                                            <div *ngIf="c.lastname.errors.required">این فیلد الزامی است</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label">کد ملی</label>
+                                        <div class="append-icon">
+                                            <input type="text" class="form-control" [(ngModel)]="currentItem.customer.nationalCode"
+                                                formControlName="nationalcode" [ngClass]="{ 'form-error': c.nationalcode.invalid && (c.nationalcode.dirty || c.nationalcode.touched) }">
+                                            <i class="icon-user"></i>
+                                        </div>
+                                        <div *ngIf="c.nationalcode.invalid && (c.nationalcode.dirty || c.nationalcode.touched)"
+                                            class="invalid-feedback form-error">
+                                            <div *ngIf="c.nationalcode.errors.required">این فیلد الزامی است</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label">تلفن</label>
+                                        <div class="append-icon">
+                                            <input type="text" class="form-control" [(ngModel)]="currentItem.customer.phone"
+                                                formControlName="phone" [ngClass]="{ 'form-error': c.phone.invalid && (c.phone.dirty || c.phone.touched) }">
+                                            <i class="icon-user"></i>
+                                        </div>
+                                        <div *ngIf="c.phone.invalid && (c.phone.dirty || c.phone.touched)" class="invalid-feedback form-error">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" (click)=addcharge()>ثبت</button>
+                <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+            </div>
+        </form>
+    </ng-template>
+
+    <ng-template #parkingExitModalContent let-close="close">
+        <form [formGroup]="parkingExitForm" (ngSubmit)="onSubmit()">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" (click)="close()">
+                    <i class="icons-office-52"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label">زمان خروج</label>
+
+                                    <input type="text" class="form-control" [(ngModel)]="currentparkedcar.exittime"
+                                        formControlName="exittime" [ngClass]="{ 'form-error': m.exittime.invalid && (m.exittime.dirty || m.exittime.touched) }">
+
+                                    <div *ngIf="m.exittime.invalid && (m.exittime.dirty || m.exittime.touched)" class="invalid-feedback form-error">
+                                        <div *ngIf="m.exittime.errors.required">این فیلد الزامی است</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label">تاریخ خروج</label>
+
+                                    <input type="text" class="form-control" [(ngModel)]="currentparkedcar.exitdate"
+                                        formControlName="exitdate" [ngClass]="{ 'form-error': m.exitdate.invalid && (m.exitdate.dirty || m.exitdate.touched) }">
+
+                                    <div *ngIf="m.exitdate.invalid && (m.exitdate.dirty || m.exitdate.touched)" class="invalid-feedback form-error">
+                                        <div *ngIf="f.exitdate.errors.required">این فیلد الزامی است</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" (click)=exitCar()>ثبت</button>
+                <button type="button" class="btn btn-default" (click)="close()">خروج</button>
+            </div>
+        </form>
+    </ng-template>
+</div>
