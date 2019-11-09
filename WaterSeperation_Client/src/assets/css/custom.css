@@ -1,0 +1,158 @@
+.modal-backdrop.fade
+{
+    opacity: 0.6 !important;
+    bottom : 0 !important;
+    z-index: 1000;
+}
+.modal-header .close
+{
+    opacity: 1 !important;
+    position: absolute;
+    left: 14px;
+    top: 14px;
+}
+.modal.fade
+{
+    opacity: 1 !important;    
+}
+.pagination
+{
+    float:left;
+    margin: 0; 
+}
+.ng-valid:not(form)  {
+    border-right: 5px solid #42A948 !important; 
+}
+.ng-invalid.form-error:not(form)  {
+    border-right: 5px solid #a94442 !important; 
+} 
+.error-message{
+    color: #a94442;
+}
+
+.sidebar .logopanel h1
+{
+    font-size: 23px;
+}
+
+#quickview-sidebar .quickview-header .nav > li
+{
+    width: 100%;
+}
+
+.morphsearch .dummy-media-object img
+{
+    margin: 0 0 0 10px;
+}
+
+.sidebar .sidebar-inner .sidebar-top h4
+{
+    text-align: center;
+    margin-top: 0px;
+}
+
+.sidebar .sidebar-inner .sidebar-top .user-login
+{
+    width: 100%;
+}
+
+.sidebar .sidebar-inner .sidebar-top .user-details .user-login .btn
+{
+    width: 100px;
+}
+
+.sidebar .sidebar-inner .sidebar-top .user-login .btn .fa
+{
+    position: absolute;
+    left : 34px;
+}
+
+.sidebar .sidebar-inner .sidebar-top .userlogged > i
+{
+    margin-bottom: -34px;
+}
+
+.sidebar .user-login .dropdown-menu li{
+    cursor: pointer;
+}
+
+.modal-header .modal-title{
+    font-size: 14px;
+}
+
+.widget-table table thead th
+{
+    text-align: center;
+}
+
+agm-map {
+    height: 740px;
+}
+
+body .divider
+{
+    color: #f8f8f8;
+
+}
+
+body.bg-clean .divider
+{
+    color: #f8f8f8;
+
+}
+
+body.bg-lighter .divider
+{
+    color: #EFEFEF;
+
+}
+
+body.bg-light-default .divider
+{
+    color: #E9E9E9;
+
+}
+
+body.bg-light-blue .divider
+{
+    color: #E2EBEF;
+
+}
+
+body.bg-light-purple .divider
+{
+    color: #E9ECF5;
+
+}
+
+body.bg-light-dark .divider
+{
+    color: #DCE1E4;
+
+}
+
+
+.checkbox label, .radio label
+{
+    font-weight: 600;
+}
+
+.main-content .page-content .panel .panel-header h3
+{
+    font-weight: 600;
+}
+
+select > option
+{
+    height: 66px;
+    font-size: 18px;
+    font-family: 'WYekan' , 'Lato', arial, sans-serif;
+    padding: 20px;
+    font-weight: 600;
+}
+
+
+.ol-overlaycontainer-stopevent
+{
+    display: none;
+}
